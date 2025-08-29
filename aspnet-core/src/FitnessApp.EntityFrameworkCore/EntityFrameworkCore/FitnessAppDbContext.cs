@@ -24,7 +24,7 @@ namespace FitnessApp.EntityFrameworkCore;
 [ReplaceDbContext(typeof(IIdentityDbContext))]
 [ReplaceDbContext(typeof(ITenantManagementDbContext))]
 [ConnectionStringName("Default")]
-public class FitnessAppDbContext :
+public partial class FitnessAppDbContext :
     AbpDbContext<FitnessAppDbContext>,
     IIdentityDbContext,
     ITenantManagementDbContext,
@@ -80,5 +80,9 @@ IOpenIddictDbContext
         builder.ConfigureOpenIddict(); // Uncomment this line
         builder.ConfigureFeatureManagement();
         builder.ConfigureTenantManagement();
+        OnModelCreating_Fitness(builder);
     }
+
+    partial void OnModelCreating_Fitness(ModelBuilder builder);
+
 }
