@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\common.props" />
 
@@ -7,10 +7,10 @@
     <Nullable>enable</Nullable>
     <RootNamespace>FitnessApp</RootNamespace>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\FitnessApp.Domain.Shared\FitnessApp.Domain.Shared.csproj" />
-  </ItemGroup>
+<ItemGroup>
+  <ProjectReference Include="..\FitnessApp.Domain\FitnessApp.Domain.csproj" />
+  <ProjectReference Include="..\FitnessApp.Domain.Shared\FitnessApp.Domain.Shared.csproj" />
+</ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Volo.Abp.ObjectExtending" Version="9.3.2" />
