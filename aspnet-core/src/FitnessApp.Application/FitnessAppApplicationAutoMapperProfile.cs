@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
+using FitnessApp.Fitness.Exercises;
 
-namespace FitnessApp;
-
-public class FitnessAppApplicationAutoMapperProfile : Profile
+namespace FitnessApp
 {
-    public FitnessAppApplicationAutoMapperProfile()
+    public class FitnessAppApplicationAutoMapperProfile : Profile
     {
-        /* You can configure your AutoMapper mapping configuration here.
-         * Alternatively, you can split your mapping configurations
-         * into multiple profile classes for a better organization. */
+        public FitnessAppApplicationAutoMapperProfile()
+        {
+            CreateMap<Exercise, ExerciseDto>();
+        }
     }
 }
