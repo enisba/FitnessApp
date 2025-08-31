@@ -77,7 +77,7 @@ IOpenIddictDbContext
         builder.ConfigureBackgroundJobs();
         builder.ConfigureAuditLogging();
         builder.ConfigureIdentity();
-        builder.ConfigureOpenIddict(); // Uncomment this line
+        builder.ConfigureOpenIddict();
         builder.ConfigureFeatureManagement();
         builder.ConfigureTenantManagement();
         OnModelCreating_Fitness(builder);

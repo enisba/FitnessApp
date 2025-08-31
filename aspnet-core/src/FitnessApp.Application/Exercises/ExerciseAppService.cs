@@ -13,7 +13,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace FitnessApp.Fitness.Exercises
 {
-    [Authorize(FitnessPermissions.Exercises.Default)]
+    //[Authorize(FitnessPermissions.Exercises.Default)]
     public class ExerciseAppService : ApplicationService, IExerciseAppService
     {
         private readonly IRepository<Exercise, Guid> _exerciseRepo;
@@ -86,7 +86,7 @@ public ExerciseAppService(
             };
         }
 
-        [Authorize(FitnessPermissions.Exercises.Create)]
+        // [Authorize(FitnessPermissions.Exercises.Create)]
         public async Task<ExerciseDto> CreateAsync(CreateExerciseDto input)
         {
             var ex = new Exercise(
@@ -107,7 +107,7 @@ public ExerciseAppService(
             };
         }
 
-        [Authorize(FitnessPermissions.Exercises.Update)]
+       //[Authorize(FitnessPermissions.Exercises.Update)]
         public async Task<ExerciseDto> UpdateAsync(Guid id, UpdateExerciseDto input)
         {
             var ex = await _exerciseRepo.GetAsync(id);
@@ -129,7 +129,7 @@ public ExerciseAppService(
             };
         }
 
-        [Authorize(FitnessPermissions.Exercises.Delete)]
+      //  [Authorize(FitnessPermissions.Exercises.Delete)]
         public async Task DeleteAsync(Guid id)
         {
             await _exerciseRepo.DeleteAsync(id);
