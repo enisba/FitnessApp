@@ -1,0 +1,22 @@
+<div class="container mt-4">
+  <h2>Exercises</h2>
+
+  <div *ngIf="loading">Loading...</div>
+
+  <table class="table table-striped" *ngIf="!loading">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Primary Muscle</th>
+        <th>Difficulty</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ex of exercises">
+        <td>{{ ex.name }}</td>
+        <td>{{ ex.primaryMuscleId }}</td>
+        <td>{{ ex.difficulty }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
