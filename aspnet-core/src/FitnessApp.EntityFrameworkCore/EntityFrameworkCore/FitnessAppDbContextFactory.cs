@@ -6,8 +6,6 @@ using Microsoft.Extensions.Configuration;
 
 namespace FitnessApp.EntityFrameworkCore;
 
-/* This class is needed for EF Core console commands
- * (like Add-Migration and Update-Database commands) */
 public class FitnessAppDbContextFactory : IDesignTimeDbContextFactory<FitnessAppDbContext>
 {
     public FitnessAppDbContext CreateDbContext(string[] args)
@@ -17,7 +15,7 @@ public class FitnessAppDbContextFactory : IDesignTimeDbContextFactory<FitnessApp
         var configuration = BuildConfiguration();
 
         var builder = new DbContextOptionsBuilder<FitnessAppDbContext>()
-            .UseNpgsql(configuration.GetConnectionString("Default"));
+            .UseSqlServer(configuration.GetConnectionString("Default"));
 
         return new FitnessAppDbContext(builder.Options);
     }
@@ -25,9 +23,10 @@ public class FitnessAppDbContextFactory : IDesignTimeDbContextFactory<FitnessApp
     private static IConfigurationRoot BuildConfiguration()
     {
         var builder = new ConfigurationBuilder()
-            .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../FitnessApp.DbMigrator/"))
+            .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false);
 
         return builder.Build();
     }
+
 }
