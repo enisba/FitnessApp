@@ -6,6 +6,7 @@ export const appRoutes: Routes = [
     pathMatch: 'full',
     loadChildren: () => import('./home/home.routes').then(m => m.homeRoutes),
   },
+  
   {
     path: 'account',
     loadChildren: () => import('@abp/ng.account').then(m => m.createRoutes()),
@@ -23,5 +24,10 @@ export const appRoutes: Routes = [
     path: 'setting-management',
     loadChildren: () =>
       import('@abp/ng.setting-management').then(m => m.createRoutes()),
+  },
+  {
+    path: 'exercises',
+    loadComponent: () =>
+      import('./exercise/exercise.component').then(m => m.ExerciseComponent),
   },
 ];
