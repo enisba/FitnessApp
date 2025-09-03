@@ -1,0 +1,37 @@
+<div class="container mt-4">
+  <h2>Muscle Groups</h2>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="mb-3 row g-2">
+    <div class="col">
+      <input formControlName="name" class="form-control" placeholder="Name">
+    </div>
+    <div class="col">
+      <input formControlName="parentId" class="form-control" placeholder="Parent Id (optional)">
+    </div>
+    <div class="col">
+      <button type="submit" class="btn btn-primary">
+        {{ editing ? 'Update' : 'Add' }}
+      </button>
+    </div>
+  </form>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>ParentId</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let g of groups">
+        <td>{{ g.name }}</td>
+        <td>{{ g.parentId }}</td>
+        <td>
+          <button class="btn btn-sm btn-warning me-2" (click)="edit(g)">Edit</button>
+          <button class="btn btn-sm btn-danger" (click)="delete(g.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
