@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ExerciseService, ExerciseDto } from '@proxy/fitness/exercises';
+import { ExerciseService, ExerciseDto, MuscleGroupService, MuscleGroupDto } from '@proxy/fitness/exercises';
 
 @Component({
   selector: 'app-exercise',
@@ -12,6 +12,7 @@ import { ExerciseService, ExerciseDto } from '@proxy/fitness/exercises';
 })
 export class ExerciseComponent implements OnInit {
   exercises: ExerciseDto[] = [];
+  muscles: MuscleGroupDto[] = [];  
   loading = false;
   form!: FormGroup;
 
@@ -21,12 +22,13 @@ export class ExerciseComponent implements OnInit {
     2: { text: 'Hard', class: 'badge bg-danger' } 
   };
 
-  muscleMap: { [key: string]: string } = {
-    "3fa85f64-5717-4562-b3fc-2c963f66afa6": "Biceps",
-    "9713359a-c230-992d-865f-3a1c1c9e6f09": "Chest"
-  };
+  editing: ExerciseDto | null = null;
 
-  constructor(private exerciseService: ExerciseService, private fb: FormBuilder) {}
+  constructor(
+    private exerciseService: ExerciseService,
+    private muscleService: MuscleGroupService,
+    private fb: FormBuilder
+  ) {}
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -35,6 +37,7 @@ export class ExerciseComponent implements OnInit {
       difficulty: [0, Validators.required],
     });
     this.getExercises();
+    this.getMuscles(); 
   }
 
   getExercises() {
@@ -52,6 +55,12 @@ export class ExerciseComponent implements OnInit {
       });
   }
 
+  getMuscles() {
+    this.muscleService.getList({ maxResultCount: 50 }).subscribe({
+      next: (res) => this.muscles = res.items
+    });
+  }
+
   addExercise() {
     if (this.form.invalid) return;
 
@@ -63,38 +72,32 @@ export class ExerciseComponent implements OnInit {
     });
   }
 
-  editing: ExerciseDto | null = null;
+  editExercise(ex: ExerciseDto) {
+    this.editing = ex;
+    this.form.patchValue({
+      name: ex.name,
+      primaryMuscleId: ex.primaryMuscleId,
+      difficulty: ex.difficulty
+    });
+  }
 
-editExercise(ex: ExerciseDto) {
-  // formu doldur
-  this.editing = ex;
-  this.form.patchValue({
-    name: ex.name,
-    primaryMuscleId: ex.primaryMuscleId,
-    difficulty: ex.difficulty
-  });
-}
+  updateExercise() {
+    if (!this.editing || this.form.invalid) return;
 
-updateExercise() {
-  if (!this.editing || this.form.invalid) return;
+    this.exerciseService.update(this.editing.id, this.form.value).subscribe({
+      next: () => {
+        this.getExercises();
+        this.form.reset({ difficulty: 0 });
+        this.editing = null;
+      }
+    });
+  }
 
-  this.exerciseService.update(this.editing.id, this.form.value).subscribe({
-    next: () => {
-      this.getExercises();
-      this.form.reset({ difficulty: 0 });
-      this.editing = null;
-    }
-  });
-}
+  deleteExercise(id: string) {
+    if (!confirm('Are you sure you want to delete this exercise?')) return;
 
-deleteExercise(id: string) {
-  if (!confirm('Are you sure you want to delete this exercise?')) return;
-
-  this.exerciseService.delete(id).subscribe({
-    next: () => {
-      this.getExercises();
-    }
-  });
-}
-
+    this.exerciseService.delete(id).subscribe({
+      next: () => this.getExercises()
+    });
+  }
 }

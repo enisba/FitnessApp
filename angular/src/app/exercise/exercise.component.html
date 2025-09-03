@@ -1,15 +1,19 @@
 <div class="container mt-4">
   <h2>Exercises</h2>
 
-  <!-- Yeni Exercise Formu -->
-<form [formGroup]="form" (ngSubmit)="editing ? updateExercise() : addExercise()" class="mb-3">
+  <form [formGroup]="form" (ngSubmit)="editing ? updateExercise() : addExercise()" class="mb-3">
     <div class="row">
       <div class="col">
-        <input formControlName="name" class="form-control" placeholder="Name" />
+        <input formControlName="name" class="form-control" placeholder="Exercise name" />
       </div>
+
       <div class="col">
-        <input formControlName="primaryMuscleId" class="form-control" placeholder="Primary Muscle Id" />
+        <select formControlName="primaryMuscleId" class="form-select">
+          <option value="" disabled>Select muscle</option>
+          <option *ngFor="let m of muscles" [value]="m.id">{{ m.name }}</option>
+        </select>
       </div>
+
       <div class="col">
         <select formControlName="difficulty" class="form-select">
           <option [value]="0">Easy</option>
@@ -17,40 +21,40 @@
           <option [value]="2">Hard</option>
         </select>
       </div>
+
       <div class="col">
-       <button type="submit" class="btn btn-primary">
-  {{ editing ? 'Update' : 'Add' }}
-</button>
+        <button type="submit" class="btn btn-primary">
+          {{ editing ? 'Update' : 'Add' }}
+        </button>
       </div>
     </div>
   </form>
 
-  <!-- Liste -->
   <div *ngIf="loading">Loading...</div>
 
   <table class="table table-striped" *ngIf="!loading">
     <thead>
-  <tr>
-    <th>Name</th>
-    <th>Primary Muscle</th>
-    <th>Difficulty</th>
-    <th>Actions</th>
-  </tr>
-</thead>
-<tbody>
-  <tr *ngFor="let ex of exercises">
-    <td>{{ ex.name }}</td>
-    <td>{{ muscleMap[ex.primaryMuscleId] || ex.primaryMuscleId }}</td>
-    <td>
-      <span [class]="difficultyMap[ex.difficulty].class">
-        {{ difficultyMap[ex.difficulty].text }}
-      </span>
-    </td>
-    <td>
-      <button class="btn btn-sm btn-warning me-2" (click)="editExercise(ex)">Edit</button>
-      <button class="btn btn-sm btn-danger" (click)="deleteExercise(ex.id)">Delete</button>
-    </td>
-  </tr>
-</tbody>
+      <tr>
+        <th>Name</th>
+        <th>Primary Muscle</th>
+        <th>Difficulty</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ex of exercises">
+        <td>{{ ex.name }}</td>
+        <td>{{ ex.primaryMuscleName }}</td> 
+        <td>
+          <span [class]="difficultyMap[ex.difficulty].class">
+            {{ difficultyMap[ex.difficulty].text }}
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-warning me-2" (click)="editExercise(ex)">Edit</button>
+          <button class="btn btn-sm btn-danger" (click)="deleteExercise(ex.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
   </table>
 </div>
