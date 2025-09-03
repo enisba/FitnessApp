@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { MuscleGroupComponent } from './muscle-group/muscle-group.component';
+
 
 export const appRoutes: Routes = [
   {
@@ -30,4 +32,6 @@ export const appRoutes: Routes = [
     loadComponent: () =>
       import('./exercise/exercise.component').then(m => m.ExerciseComponent),
   },
+  { path: 'muscle-groups', component: MuscleGroupComponent }
+
 ];
