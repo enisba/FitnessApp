@@ -8,7 +8,9 @@
     "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+  "generate-proxy": "abp generate-proxy -t ng --project FitnessApp --target src/app/proxy --module FitnessApp"
+
   },
   "private": true,
   "dependencies": {
