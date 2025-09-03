@@ -8,6 +8,9 @@ namespace FitnessApp
         public FitnessAppApplicationAutoMapperProfile()
         {
             CreateMap<Exercise, ExerciseDto>();
+            CreateMap<MuscleGroup, MuscleGroupDto>();
+            CreateMap<CreateMuscleGroupDto, MuscleGroup>();
+            CreateMap<UpdateMuscleGroupDto, MuscleGroup>();
         }
     }
 }

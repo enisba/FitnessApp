@@ -22,6 +22,13 @@ function configureRoutes(routes: RoutesService) {
         order: 2,
         layout: eLayoutType.application,
       },
+      {
+  path: '/muscle-groups',
+  name: 'Muscle Groups',
+  iconClass: 'fas fa-users', // istediğin bir ikon
+  order: 3,
+  layout: eLayoutType.application,
+}
     ]);
   };
 }

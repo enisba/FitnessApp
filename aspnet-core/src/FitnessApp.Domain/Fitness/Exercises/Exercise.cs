@@ -50,10 +50,13 @@ namespace FitnessApp.Fitness.Exercises
             Difficulty = difficulty;
         }
 
-        public void UpdateBasics(string v, Guid primaryMuscleId, Difficulty difficulty)
+        public void UpdateBasics(string name, Guid primaryMuscleId, Difficulty difficulty)
         {
-            throw new NotImplementedException();
+            Name = Check.NotNullOrWhiteSpace(name, nameof(name));
+            PrimaryMuscleId = primaryMuscleId;
+            Difficulty = difficulty;
         }
+
     }
 
     public class ExerciseEquipment : Entity<Guid>
