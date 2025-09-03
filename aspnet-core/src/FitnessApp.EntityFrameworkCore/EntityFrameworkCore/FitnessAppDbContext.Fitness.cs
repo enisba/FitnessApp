@@ -1,4 +1,5 @@
 ﻿using FitnessApp.Fitness.Exercises;
+using FitnessApp.Fitness.Workouts;
 using Microsoft.EntityFrameworkCore;
 
 namespace FitnessApp.EntityFrameworkCore
@@ -9,6 +10,8 @@ namespace FitnessApp.EntityFrameworkCore
         public DbSet<Equipment> Equipments { get; set; }
         public DbSet<Exercise> Exercises { get; set; }
         public DbSet<ExerciseEquipment> ExerciseEquipments { get; set; }
+        public DbSet<Workout> Workouts { get; set; }
+        public DbSet<WorkoutExercise> WorkoutExercises { get; set; }
 
         partial void OnModelCreating_Fitness(ModelBuilder builder)
         {
@@ -46,6 +49,24 @@ namespace FitnessApp.EntityFrameworkCore
                  .WithMany()
                  .HasForeignKey(p => p.EquipmentId)
                  .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<Workout>(x =>
+            {
+                x.ToTable("Workouts", "fit");
+                x.Property(p => p.Name).IsRequired().HasMaxLength(128);
+
+                x.HasMany(p => p.Exercises)
+                 .WithOne()
+                 .HasForeignKey(e => e.WorkoutId)
+                 .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<WorkoutExercise>(x =>
+            {
+                x.ToTable("WorkoutExercises", "fit");
+                x.Property(p => p.Sets).IsRequired();
+                x.Property(p => p.Reps).IsRequired();
             });
         }
     }
