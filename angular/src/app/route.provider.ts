@@ -28,7 +28,15 @@ function configureRoutes(routes: RoutesService) {
   iconClass: 'fas fa-users', // istediğin bir ikon
   order: 3,
   layout: eLayoutType.application,
+},
+{
+  path: '/workouts',
+  name: 'Workouts',
+  iconClass: 'fas fa-dumbbell',
+  order: 4,
+  layout: eLayoutType.application,
 }
+
     ]);
   };
 }

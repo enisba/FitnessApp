@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { MuscleGroupComponent } from './muscle-group/muscle-group.component';
+import { WorkoutComponent } from './workout/workout.component'; 
 
 
 export const appRoutes: Routes = [
@@ -32,6 +33,11 @@ export const appRoutes: Routes = [
     loadComponent: () =>
       import('./exercise/exercise.component').then(m => m.ExerciseComponent),
   },
-  { path: 'muscle-groups', component: MuscleGroupComponent }
+  { path: 'muscle-groups', component: MuscleGroupComponent },
+  {
+    path: 'workouts',
+    loadComponent: () =>
+      import('./workout/workout.component').then(m => m.WorkoutComponent), // ✅ yeni route
+  },
 
 ];
