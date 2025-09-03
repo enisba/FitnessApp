@@ -1,2 +1,3 @@
 import * as Exercises from './exercises';
-export { Exercises };
+import * as Workouts from './workouts';
+export { Exercises, Workouts };
