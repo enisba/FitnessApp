@@ -7,6 +7,11 @@ export interface CreateExerciseDto {
   difficulty?: Difficulty;
 }
 
+export interface CreateMuscleGroupDto {
+  name?: string;
+  parentId?: string;
+}
+
 export interface ExerciseDto extends EntityDto<string> {
   name?: string;
   primaryMuscleId?: string;
@@ -19,5 +24,13 @@ export interface ExerciseListInput extends PagedAndSortedResultRequestDto {
   difficulty?: Difficulty;
 }
 
+export interface MuscleGroupDto extends EntityDto<string> {
+  name?: string;
+  parentId?: string;
+}
+
 export interface UpdateExerciseDto extends CreateExerciseDto {
+}
+
+export interface UpdateMuscleGroupDto extends CreateMuscleGroupDto {
 }
