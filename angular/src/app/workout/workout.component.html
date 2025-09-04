@@ -1,33 +1,47 @@
 <div class="container mt-4">
   <h2>Workouts</h2>
 
-  <!-- Form -->
-  <form [formGroup]="form" (ngSubmit)="saveWorkout()" class="mb-3 row g-2">
-    <div class="col">
+  <!-- Yeni Workout Formu -->
+  <form [formGroup]="form" (ngSubmit)="saveWorkout()" class="mb-3">
+    <div class="mb-3">
       <input formControlName="name" class="form-control" placeholder="Workout name" />
     </div>
 
-    <div class="col">
-      <select formControlName="exerciseId" class="form-select">
-        <option value="" disabled>Select exercise</option>
-        <option *ngFor="let ex of exercises" [value]="ex.id">{{ ex.name }}</option>
-      </select>
+    <div formArrayName="exercises">
+      <div
+        class="row g-2 align-items-center mb-2"
+        *ngFor="let ex of exerciseArray.controls; let i = index"
+        [formGroupName]="i"
+      >
+        <div class="col">
+          <select formControlName="exerciseId" class="form-select">
+            <option value="" disabled>Select exercise</option>
+            <option *ngFor="let e of exercises" [value]="e.id">{{ e.name }}</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <input type="number" formControlName="sets" class="form-control" placeholder="Sets" />
+        </div>
+
+        <div class="col">
+          <input type="number" formControlName="reps" class="form-control" placeholder="Reps" />
+        </div>
+
+        <div class="col">
+          <input type="number" formControlName="weight" class="form-control" placeholder="Weight (kg)" />
+        </div>
+
+        <div class="col-auto">
+          <button type="button" class="btn btn-danger" (click)="removeExercise(i)">X</button>
+        </div>
+      </div>
     </div>
 
-    <div class="col">
-      <input type="number" formControlName="sets" class="form-control" placeholder="Sets" />
-    </div>
+    <button type="button" class="btn btn-secondary mb-3" (click)="addExercise()">+ Add Exercise</button>
 
-    <div class="col">
-      <input type="number" formControlName="reps" class="form-control" placeholder="Reps" />
-    </div>
-
-    <div class="col">
-      <input type="number" formControlName="weight" class="form-control" placeholder="Weight (kg)" />
-    </div>
-
-    <div class="col">
-      <button type="submit" class="btn btn-primary">Add Workout</button>
+    <div>
+      <button type="submit" class="btn btn-primary">Save Workout</button>
     </div>
   </form>
 

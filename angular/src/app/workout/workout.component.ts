@@ -1,18 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import {
   WorkoutService,
   WorkoutDto,
   CreateWorkoutDto,
-  WorkoutExerciseDto,
 } from '@proxy/fitness/workouts';
 
-import {
-  ExerciseService,
-  ExerciseDto,
-} from '@proxy/fitness/exercises';
-
+import { ExerciseService, ExerciseDto } from '@proxy/fitness/exercises';
 
 @Component({
   selector: 'app-workout',
@@ -22,7 +17,7 @@ import {
 })
 export class WorkoutComponent implements OnInit {
   workouts: WorkoutDto[] = [];
-  exercises: ExerciseDto[] = []; // dropdown için egzersizler
+  exercises: ExerciseDto[] = [];
   form!: FormGroup;
   loading = false;
 
@@ -35,14 +30,33 @@ export class WorkoutComponent implements OnInit {
   ngOnInit() {
     this.form = this.fb.group({
       name: ['', Validators.required],
+      exercises: this.fb.array([]) // birden fazla exercise için array
+    });
+
+    this.loadWorkouts();
+    this.loadExercises();
+    this.addExercise(); // başlangıçta 1 satır gelsin
+  }
+
+  get exerciseArray(): FormArray {
+    return this.form.get('exercises') as FormArray;
+  }
+
+  newExerciseGroup(): FormGroup {
+    return this.fb.group({
       exerciseId: ['', Validators.required],
       sets: [3, Validators.required],
       reps: [10, Validators.required],
       weight: [null],
     });
+  }
 
-    this.loadWorkouts();
-    this.loadExercises();
+  addExercise() {
+    this.exerciseArray.push(this.newExerciseGroup());
+  }
+
+  removeExercise(i: number) {
+    this.exerciseArray.removeAt(i);
   }
 
   loadWorkouts() {
@@ -65,22 +79,14 @@ export class WorkoutComponent implements OnInit {
   saveWorkout() {
     if (this.form.invalid) return;
 
-    const dto: CreateWorkoutDto = {
-      name: this.form.value.name,
-      exercises: [
-        {
-          exerciseId: this.form.value.exerciseId,
-          sets: this.form.value.sets,
-          reps: this.form.value.reps,
-          weight: this.form.value.weight,
-        },
-      ],
-    };
+    const dto: CreateWorkoutDto = this.form.value;
 
     this.workoutService.create(dto).subscribe({
       next: () => {
         this.loadWorkouts();
-        this.form.reset({ sets: 3, reps: 10 });
+        this.form.reset();
+        this.exerciseArray.clear();
+        this.addExercise();
       },
     });
   }
