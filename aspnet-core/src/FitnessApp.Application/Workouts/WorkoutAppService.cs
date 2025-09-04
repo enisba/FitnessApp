@@ -1,12 +1,11 @@
-﻿using FitnessApp.Fitness.Exercises;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Authorization;
 using Volo.Abp.Domain.Repositories;
-using Volo.Abp.Guids;
 using Volo.Abp.Users;
 
 namespace FitnessApp.Fitness.Workouts
@@ -14,77 +13,129 @@ namespace FitnessApp.Fitness.Workouts
     public class WorkoutAppService : ApplicationService, IWorkoutAppService
     {
         private readonly IRepository<Workout, Guid> _workoutRepo;
-        private readonly IRepository<WorkoutExercise, Guid> _weRepo;
-        private readonly IRepository<Exercise, Guid> _exerciseRepo;
+        private readonly ICurrentUser _currentUser;
 
-        public WorkoutAppService(
-            IRepository<Workout, Guid> workoutRepo,
-            IRepository<WorkoutExercise, Guid> weRepo,
-            IRepository<Exercise, Guid> exerciseRepo)
+        public WorkoutAppService(IRepository<Workout, Guid> workoutRepo, ICurrentUser currentUser)
         {
             _workoutRepo = workoutRepo;
-            _weRepo = weRepo;
-            _exerciseRepo = exerciseRepo;
+            _currentUser = currentUser;
+        }
+
+        public async Task<PagedResultDto<WorkoutDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+        {
+            var queryable = await _workoutRepo.WithDetailsAsync(x => x.Exercises);
+
+
+
+            // 🔑 sadece kendi workoutlarını görsün
+            if (_currentUser.Id.HasValue && !_currentUser.IsInRole("admin"))
+            {
+                queryable = queryable.Where(x => x.UserId == _currentUser.Id.Value);
+            }
+
+            var totalCount = queryable.Count();
+
+            var items = queryable
+                .OrderByDescending(x => x.CreationTime)
+                .Skip(input.SkipCount)
+                .Take(input.MaxResultCount)
+                .ToList();
+
+            var dtos = items.Select(x => new WorkoutDto
+            {
+                Id = x.Id,
+                Name = x.Name,
+                UserId = x.UserId,
+                Exercises = (x.Exercises ?? new List<WorkoutExercise>())
+                    .Select(e => new WorkoutExerciseDto
+                    {
+                        ExerciseId = e.ExerciseId,
+                        Sets = e.Sets,
+                        Reps = e.Reps,
+                        Weight = e.Weight
+                    }).ToList()
+            }).ToList();
+            return new PagedResultDto<WorkoutDto>(totalCount, dtos);
         }
 
         public async Task<WorkoutDto> CreateAsync(CreateWorkoutDto input)
         {
-            var workout = new Workout(GuidGenerator.Create(), input.Name, CurrentUser.Id.Value);
+            if (!_currentUser.Id.HasValue)
+            {
+                throw new AbpAuthorizationException("User must be logged in to create a workout.");
+            }
 
-            await _workoutRepo.InsertAsync(workout, autoSave: true);
+            var workout = new Workout(
+                GuidGenerator.Create(),
+                input.Name,
+                _currentUser.Id.Value // 🔑 workout login olan kullanıcıya bağlı
+            );
 
             foreach (var ex in input.Exercises)
             {
-                var we = new WorkoutExercise(GuidGenerator.Create(), workout.Id, ex.ExerciseId, ex.Sets, ex.Reps, ex.Weight);
-                await _weRepo.InsertAsync(we, autoSave: true);
+                workout.Exercises.Add(new WorkoutExercise(
+                    GuidGenerator.Create(),
+                    workout.Id,
+                    ex.ExerciseId,
+                    ex.Sets,
+                    ex.Reps,
+                    ex.Weight
+                ));
             }
 
-            return await GetAsync(workout.Id);
-        }
-
-        public async Task<WorkoutDto> GetAsync(Guid id)
-        {
-            var workout = await _workoutRepo.GetAsync(id);
-            var exercises = await _weRepo.GetListAsync(x => x.WorkoutId == workout.Id);
-            var exerciseNames = await _exerciseRepo.GetListAsync();
+            workout = await _workoutRepo.InsertAsync(workout, autoSave: true);
 
             return new WorkoutDto
             {
                 Id = workout.Id,
                 Name = workout.Name,
                 UserId = workout.UserId,
-                Exercises = (from we in exercises
-                             join e in exerciseNames on we.ExerciseId equals e.Id
-                             select new WorkoutExerciseDto
-                             {
-                                 Id = we.Id,
-                                 ExerciseId = e.Id,
-                                 ExerciseName = e.Name,
-                                 Sets = we.Sets,
-                                 Reps = we.Reps,
-                                 Weight = we.Weight
-                             }).ToList()
+                Exercises = workout.Exercises.Select(e => new WorkoutExerciseDto
+                {
+                    ExerciseId = e.ExerciseId,
+                    Sets = e.Sets,
+                    Reps = e.Reps,
+                    Weight = e.Weight
+                }).ToList()
             };
         }
-
-        public async Task<PagedResultDto<WorkoutDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+        public async Task<WorkoutDto> GetAsync(Guid id)
         {
-            var workouts = await _workoutRepo.GetListAsync();
-            var total = workouts.Count;
+            var workout = await _workoutRepo.GetAsync(id);
 
-            var dtos = new List<WorkoutDto>();
-            foreach (var w in workouts)
+            if (workout.UserId != _currentUser.Id && !_currentUser.IsInRole("admin"))
             {
-                dtos.Add(await GetAsync(w.Id));
+                throw new AbpAuthorizationException("You cannot access this workout.");
             }
 
-            return new PagedResultDto<WorkoutDto>(total, dtos);
+
+            return new WorkoutDto
+            {
+                Id = workout.Id,
+                Name = workout.Name,
+                UserId = workout.UserId,
+                Exercises = workout.Exercises.Select(e => new WorkoutExerciseDto
+                {
+                    ExerciseId = e.ExerciseId,
+                    Sets = e.Sets,
+                    Reps = e.Reps,
+                    Weight = e.Weight
+                }).ToList()
+            };
         }
 
         public async Task DeleteAsync(Guid id)
         {
-            await _weRepo.DeleteAsync(x => x.WorkoutId == id);
-            await _workoutRepo.DeleteAsync(id);
+            var workout = await _workoutRepo.GetAsync(id);
+
+            if (workout.UserId != _currentUser.Id && !_currentUser.IsInRole("admin"))
+            {
+                throw new AbpAuthorizationException("You cannot delete this workout.");
+            }
+
+
+            await _workoutRepo.DeleteAsync(workout);
         }
+
     }
 }
