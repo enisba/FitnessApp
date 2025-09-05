@@ -1,10 +1,15 @@
 <div class="container mt-4">
   <h2>Workouts</h2>
 
-  <!-- Yeni Workout Formu -->
-  <form [formGroup]="form" (ngSubmit)="saveWorkout()" class="mb-3">
+  <!-- Workout Form -->
+<form [formGroup]="form" (ngSubmit)="saveWorkout()" class="mb-3">
+
     <div class="mb-3">
-      <input formControlName="name" class="form-control" placeholder="Workout name" />
+      <input
+        formControlName="name"
+        class="form-control"
+        placeholder="Workout name"
+      />
     </div>
 
     <div formArrayName="exercises">
@@ -16,32 +21,72 @@
         <div class="col">
           <select formControlName="exerciseId" class="form-select">
             <option value="" disabled>Select exercise</option>
-            <option *ngFor="let e of exercises" [value]="e.id">{{ e.name }}</option>
+            <option *ngFor="let e of exercises" [value]="e.id">
+              {{ e.name }}
+            </option>
           </select>
         </div>
 
         <div class="col">
-          <input type="number" formControlName="sets" class="form-control" placeholder="Sets" />
+          <input
+            type="number"
+            formControlName="sets"
+            class="form-control"
+            placeholder="Sets"
+          />
         </div>
 
         <div class="col">
-          <input type="number" formControlName="reps" class="form-control" placeholder="Reps" />
+          <input
+            type="number"
+            formControlName="reps"
+            class="form-control"
+            placeholder="Reps"
+          />
         </div>
 
         <div class="col">
-          <input type="number" formControlName="weight" class="form-control" placeholder="Weight (kg)" />
+          <input
+            type="number"
+            formControlName="weight"
+            class="form-control"
+            placeholder="Weight (kg)"
+          />
         </div>
 
         <div class="col-auto">
-          <button type="button" class="btn btn-danger" (click)="removeExercise(i)">X</button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="removeExercise(i)"
+          >
+            X
+          </button>
         </div>
       </div>
     </div>
 
-    <button type="button" class="btn btn-secondary mb-3" (click)="addExercise()">+ Add Exercise</button>
+    <button
+      type="button"
+      class="btn btn-secondary mb-3"
+      (click)="addExercise()"
+    >
+      + Add Exercise
+    </button>
 
     <div>
-      <button type="submit" class="btn btn-primary">Save Workout</button>
+<button type="submit" class="btn btn-primary">
+  {{ editing ? 'Update Workout' : 'Save Workout' }}
+</button>
+<button
+  *ngIf="editing"
+  type="button"
+  class="btn btn-secondary ms-2"
+  (click)="cancelEdit()"
+>
+  Cancel
+</button>
+
     </div>
   </form>
 
@@ -68,9 +113,42 @@
           </ul>
         </td>
         <td>
-          <button class="btn btn-sm btn-danger" (click)="deleteWorkout(w.id)">Delete</button>
+          <button
+            class="btn btn-sm btn-info me-2"
+            (click)="showDetails(w)"
+          >
+            Details
+          </button>
+          <button
+            class="btn btn-sm btn-warning me-2"
+            (click)="editWorkout(w)"
+          >
+            Edit
+          </button>
+          <button
+            class="btn btn-sm btn-danger"
+            (click)="deleteWorkout(w.id)"
+          >
+            Delete
+          </button>
         </td>
       </tr>
     </tbody>
   </table>
+
+  <!-- Detaylar -->
+  <div *ngIf="details" class="card mt-3">
+    <div class="card-body">
+      <h4>{{ details.name }}</h4>
+      <ul>
+        <li *ngFor="let ex of details.exercises">
+          {{ ex.exerciseName }} - {{ ex.sets }}x{{ ex.reps }}
+          <span *ngIf="ex.weight">({{ ex.weight }} kg)</span>
+        </li>
+      </ul>
+      <button class="btn btn-secondary" (click)="closeDetails()">
+        Close
+      </button>
+    </div>
+  </div>
 </div>
