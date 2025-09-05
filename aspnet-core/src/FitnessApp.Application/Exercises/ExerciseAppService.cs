@@ -9,8 +9,6 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
-
-
 namespace FitnessApp.Fitness.Exercises
 {
     //[Authorize(FitnessPermissions.Exercises.Default)]
@@ -20,20 +18,19 @@ namespace FitnessApp.Fitness.Exercises
         private readonly IRepository<Equipment, Guid> _equipmentRepo;
         private readonly IRepository<ExerciseEquipment, Guid> _eeRepo;
 
-public ExerciseAppService(
-    IRepository<Exercise, Guid> exerciseRepo,
-    IRepository<Equipment, Guid> equipmentRepo,
-    IRepository<ExerciseEquipment, Guid> eeRepo)
-{
-    _exerciseRepo = exerciseRepo;
-    _equipmentRepo = equipmentRepo;
-    _eeRepo = eeRepo;
-}
-
+        public ExerciseAppService(
+            IRepository<Exercise, Guid> exerciseRepo,
+            IRepository<Equipment, Guid> equipmentRepo,
+            IRepository<ExerciseEquipment, Guid> eeRepo)
+        {
+            _exerciseRepo = exerciseRepo;
+            _equipmentRepo = equipmentRepo;
+            _eeRepo = eeRepo;
+        }
 
         public async Task<PagedResultDto<ExerciseDto>> GetListAsync(ExerciseListInput input)
         {
-            var exQ = await _exerciseRepo.GetQueryableAsync();
+            var exQ = await _exerciseRepo.WithDetailsAsync(x => x.PrimaryMuscle);
 
             if (input.MuscleId.HasValue)
                 exQ = exQ.Where(x => x.PrimaryMuscleId == input.MuscleId.Value);
@@ -68,6 +65,7 @@ public ExerciseAppService(
                 Id = x.Id,
                 Name = x.Name,
                 PrimaryMuscleId = x.PrimaryMuscleId,
+                PrimaryMuscleName = x.PrimaryMuscle != null ? x.PrimaryMuscle.Name : string.Empty,
                 Difficulty = x.Difficulty
             }).ToList();
 
@@ -76,12 +74,15 @@ public ExerciseAppService(
 
         public async Task<ExerciseDto> GetAsync(Guid id)
         {
-            var ex = await _exerciseRepo.GetAsync(id);
+            var ex = await _exerciseRepo.WithDetails(x => x.PrimaryMuscle)
+                                        .FirstOrDefaultAsync(x => x.Id == id);
+
             return new ExerciseDto
             {
                 Id = ex.Id,
                 Name = ex.Name,
                 PrimaryMuscleId = ex.PrimaryMuscleId,
+                PrimaryMuscleName = ex.PrimaryMuscle != null ? ex.PrimaryMuscle.Name : string.Empty,
                 Difficulty = ex.Difficulty
             };
         }
@@ -103,11 +104,12 @@ public ExerciseAppService(
                 Id = ex.Id,
                 Name = ex.Name,
                 PrimaryMuscleId = ex.PrimaryMuscleId,
+                PrimaryMuscleName = string.Empty, // insert sonrası yüklenmiyor
                 Difficulty = ex.Difficulty
             };
         }
 
-       //[Authorize(FitnessPermissions.Exercises.Update)]
+        // [Authorize(FitnessPermissions.Exercises.Update)]
         public async Task<ExerciseDto> UpdateAsync(Guid id, UpdateExerciseDto input)
         {
             var ex = await _exerciseRepo.GetAsync(id);
@@ -125,11 +127,12 @@ public ExerciseAppService(
                 Id = ex.Id,
                 Name = ex.Name,
                 PrimaryMuscleId = ex.PrimaryMuscleId,
+                PrimaryMuscleName = string.Empty,
                 Difficulty = ex.Difficulty
             };
         }
 
-      //  [Authorize(FitnessPermissions.Exercises.Delete)]
+        // [Authorize(FitnessPermissions.Exercises.Delete)]
         public async Task DeleteAsync(Guid id)
         {
             await _exerciseRepo.DeleteAsync(id);

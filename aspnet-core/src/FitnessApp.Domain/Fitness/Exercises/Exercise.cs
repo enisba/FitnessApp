@@ -39,6 +39,8 @@ namespace FitnessApp.Fitness.Exercises
         public Guid PrimaryMuscleId { get; private set; }
         public Difficulty Difficulty { get; private set; }
 
+        public virtual MuscleGroup PrimaryMuscle { get; private set; }
+
         public ICollection<ExerciseEquipment> Equipments { get; private set; } = new List<ExerciseEquipment>();
 
         protected Exercise() { }
@@ -56,10 +58,10 @@ namespace FitnessApp.Fitness.Exercises
             PrimaryMuscleId = primaryMuscleId;
             Difficulty = difficulty;
         }
-
     }
 
-    public class ExerciseEquipment : Entity<Guid>
+
+public class ExerciseEquipment : Entity<Guid>
     {
         public Guid ExerciseId { get; private set; }
         public Guid EquipmentId { get; private set; }

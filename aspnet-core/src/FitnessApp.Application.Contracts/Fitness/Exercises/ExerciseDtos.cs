@@ -9,6 +9,8 @@ namespace FitnessApp.Fitness.Exercises
         public string Name { get; set; }
         public Guid PrimaryMuscleId { get; set; }
         public Difficulty Difficulty { get; set; }
+
+        public string PrimaryMuscleName { get; set; }
         // İstersen ileride: public List<Guid> EquipmentIds { get; set; }
     }
 
