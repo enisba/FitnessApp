@@ -12,6 +12,9 @@ export interface CreateWorkoutExerciseDto {
   weight?: number;
 }
 
+export interface UpdateWorkoutDto extends CreateWorkoutDto {
+}
+
 export interface WorkoutDto extends EntityDto<string> {
   name?: string;
   userId?: string;

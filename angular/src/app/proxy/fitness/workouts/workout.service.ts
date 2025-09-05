@@ -1,4 +1,4 @@
-import type { CreateWorkoutDto, WorkoutDto } from './models';
+import type { CreateWorkoutDto, UpdateWorkoutDto, WorkoutDto } from './models';
 import { RestService, Rest } from '@abp/ng.core';
 import type { PagedAndSortedResultRequestDto, PagedResultDto } from '@abp/ng.core';
 import { Injectable } from '@angular/core';
@@ -40,6 +40,15 @@ export class WorkoutService {
       method: 'GET',
       url: '/api/app/workout',
       params: { sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount },
+    },
+    { apiName: this.apiName,...config });
+  
+
+  update = (id: string, input: UpdateWorkoutDto, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, WorkoutDto>({
+      method: 'PUT',
+      url: `/api/app/workout/${id}`,
+      body: input,
     },
     { apiName: this.apiName,...config });
 
