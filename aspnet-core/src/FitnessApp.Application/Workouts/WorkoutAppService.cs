@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FitnessApp.Fitness.Exercises;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,13 +14,19 @@ namespace FitnessApp.Fitness.Workouts
     public class WorkoutAppService : ApplicationService, IWorkoutAppService
     {
         private readonly IRepository<Workout, Guid> _workoutRepo;
+        private readonly IRepository<Exercise, Guid> _exerciseRepo;
         private readonly ICurrentUser _currentUser;
 
-        public WorkoutAppService(IRepository<Workout, Guid> workoutRepo, ICurrentUser currentUser)
+        public WorkoutAppService(
+            IRepository<Workout, Guid> workoutRepo,
+            IRepository<Exercise, Guid> exerciseRepo,
+            ICurrentUser currentUser)
         {
             _workoutRepo = workoutRepo;
+            _exerciseRepo = exerciseRepo;
             _currentUser = currentUser;
         }
+
 
         public async Task<PagedResultDto<WorkoutDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
@@ -40,7 +47,8 @@ namespace FitnessApp.Fitness.Workouts
                 .Skip(input.SkipCount)
                 .Take(input.MaxResultCount)
                 .ToList();
-
+            var exerciseLookup = (await _exerciseRepo.GetQueryableAsync())
+    .ToDictionary(x => x.Id, x => x.Name);
             var dtos = items.Select(x => new WorkoutDto
             {
                 Id = x.Id,
@@ -50,6 +58,7 @@ namespace FitnessApp.Fitness.Workouts
                     .Select(e => new WorkoutExerciseDto
                     {
                         ExerciseId = e.ExerciseId,
+                        ExerciseName = exerciseLookup.ContainsKey(e.ExerciseId) ? exerciseLookup[e.ExerciseId] : null,
                         Sets = e.Sets,
                         Reps = e.Reps,
                         Weight = e.Weight
@@ -84,7 +93,8 @@ namespace FitnessApp.Fitness.Workouts
             }
 
             workout = await _workoutRepo.InsertAsync(workout, autoSave: true);
-
+            var exerciseLookup = (await _exerciseRepo.GetQueryableAsync())
+    .ToDictionary(x => x.Id, x => x.Name);
             return new WorkoutDto
             {
                 Id = workout.Id,
@@ -93,6 +103,7 @@ namespace FitnessApp.Fitness.Workouts
                 Exercises = workout.Exercises.Select(e => new WorkoutExerciseDto
                 {
                     ExerciseId = e.ExerciseId,
+                    ExerciseName = !exerciseLookup.TryGetValue(e.ExerciseId, out string? value) ? null : value,
                     Sets = e.Sets,
                     Reps = e.Reps,
                     Weight = e.Weight
@@ -108,7 +119,8 @@ namespace FitnessApp.Fitness.Workouts
                 throw new AbpAuthorizationException("You cannot access this workout.");
             }
 
-
+            var exerciseLookup = (await _exerciseRepo.GetQueryableAsync())
+    .ToDictionary(x => x.Id, x => x.Name);
             return new WorkoutDto
             {
                 Id = workout.Id,
@@ -117,6 +129,7 @@ namespace FitnessApp.Fitness.Workouts
                 Exercises = workout.Exercises.Select(e => new WorkoutExerciseDto
                 {
                     ExerciseId = e.ExerciseId,
+                    ExerciseName = exerciseLookup.ContainsKey(e.ExerciseId) ? exerciseLookup[e.ExerciseId] : null,
                     Sets = e.Sets,
                     Reps = e.Reps,
                     Weight = e.Weight
@@ -136,6 +149,44 @@ namespace FitnessApp.Fitness.Workouts
 
             await _workoutRepo.DeleteAsync(workout);
         }
+
+        public async Task<WorkoutDto> UpdateAsync(Guid id, UpdateWorkoutDto input)
+        {
+            var workout = await _workoutRepo.GetAsync(id);
+
+            workout.UpdateName(input.Name);
+            workout.Exercises.Clear();
+            foreach (var ex in input.Exercises)
+            {
+                workout.Exercises.Add(new WorkoutExercise(
+                    GuidGenerator.Create(),
+                    workout.Id,
+                    ex.ExerciseId,
+                    ex.Sets,
+                    ex.Reps,
+                    ex.Weight
+                ));
+            }
+
+            await _workoutRepo.UpdateAsync(workout, autoSave: true);
+            var exerciseLookup = (await _exerciseRepo.GetQueryableAsync())
+    .ToDictionary(x => x.Id, x => x.Name);
+            return new WorkoutDto
+            {
+                Id = workout.Id,
+                Name = workout.Name,
+                UserId = workout.UserId,
+                Exercises = workout.Exercises.Select(e => new WorkoutExerciseDto
+                {
+                    ExerciseId = e.ExerciseId,
+                    ExerciseName = exerciseLookup.TryGetValue(e.ExerciseId, out string? value) ? value : null,
+                    Sets = e.Sets,
+                    Reps = e.Reps,
+                    Weight = e.Weight
+                }).ToList()
+            };
+        }
+
 
     }
 }
