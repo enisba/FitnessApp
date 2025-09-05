@@ -5,6 +5,7 @@ import {
   WorkoutService,
   WorkoutDto,
   CreateWorkoutDto,
+  UpdateWorkoutDto,
 } from '@proxy/fitness/workouts';
 
 import { ExerciseService, ExerciseDto } from '@proxy/fitness/exercises';
@@ -20,6 +21,8 @@ export class WorkoutComponent implements OnInit {
   exercises: ExerciseDto[] = [];
   form!: FormGroup;
   loading = false;
+  editing: WorkoutDto | null = null;
+  details: WorkoutDto | null = null;
 
   constructor(
     private workoutService: WorkoutService,
@@ -30,12 +33,12 @@ export class WorkoutComponent implements OnInit {
   ngOnInit() {
     this.form = this.fb.group({
       name: ['', Validators.required],
-      exercises: this.fb.array([]) // birden fazla exercise için array
+      exercises: this.fb.array([])
     });
 
     this.loadWorkouts();
     this.loadExercises();
-    this.addExercise(); // başlangıçta 1 satır gelsin
+    this.addExercise(); // başlangıçta 1 satır
   }
 
   get exerciseArray(): FormArray {
@@ -79,20 +82,58 @@ export class WorkoutComponent implements OnInit {
   saveWorkout() {
     if (this.form.invalid) return;
 
-    const dto: CreateWorkoutDto = this.form.value;
-
-    this.workoutService.create(dto).subscribe({
-      next: () => {
+    if (this.editing) {
+      // update
+      const dto: UpdateWorkoutDto = this.form.value;
+      this.workoutService.update(this.editing.id, dto).subscribe(() => {
         this.loadWorkouts();
-        this.form.reset();
-        this.exerciseArray.clear();
-        this.addExercise();
-      },
+        this.cancelEdit();
+      });
+    } else {
+      // create
+      const dto: CreateWorkoutDto = this.form.value;
+      this.workoutService.create(dto).subscribe(() => {
+        this.loadWorkouts();
+        this.resetForm();
+      });
+    }
+  }
+
+  editWorkout(workout: WorkoutDto) {
+    this.editing = workout;
+    this.form.patchValue({ name: workout.name });
+    this.exerciseArray.clear();
+    workout.exercises.forEach(ex => {
+      this.exerciseArray.push(this.fb.group({
+        exerciseId: [ex.exerciseId, Validators.required],
+        sets: [ex.sets, Validators.required],
+        reps: [ex.reps, Validators.required],
+        weight: [ex.weight],
+      }));
     });
+  }
+
+  cancelEdit() {
+    this.editing = null;
+    this.resetForm();
+  }
+
+  resetForm() {
+    this.form.reset();
+    this.exerciseArray.clear();
+    this.addExercise();
   }
 
   deleteWorkout(id: string) {
     if (!confirm('Delete workout?')) return;
     this.workoutService.delete(id).subscribe(() => this.loadWorkouts());
+  }
+
+  showDetails(workout: WorkoutDto) {
+    this.details = workout;
+  }
+
+  closeDetails() {
+    this.details = null;
   }
 }
