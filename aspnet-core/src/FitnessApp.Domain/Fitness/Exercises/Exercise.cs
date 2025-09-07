@@ -23,7 +23,7 @@ namespace FitnessApp.Fitness.Exercises
 
     public class Equipment : Entity<Guid>
     {
-        public string Name { get; private set; }
+        public string Name { get; private set; } = string.Empty;
 
         protected Equipment() { }
 
