@@ -2,6 +2,7 @@
 using FitnessApp.Fitness.Nutritions;
 using FitnessApp.Fitness.Workouts;
 using Microsoft.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 
 namespace FitnessApp.EntityFrameworkCore
 {
@@ -14,6 +15,11 @@ namespace FitnessApp.EntityFrameworkCore
         public DbSet<Workout> Workouts { get; set; }
         public DbSet<WorkoutExercise> WorkoutExercises { get; set; }
         public DbSet<Meal> Meals { get; set; }
+
+        public DbSet<MealLog> MealLogs { get; set; }
+        public DbSet<MealLogItem> MealLogItems { get; set; }
+
+
 
 
         partial void OnModelCreating_Fitness(ModelBuilder builder)
@@ -78,6 +84,21 @@ namespace FitnessApp.EntityFrameworkCore
                 b.Property(x => x.Name).IsRequired().HasMaxLength(128);
                 b.HasIndex(x => x.UserId);
             });
+
+            builder.Entity<MealLog>(b =>
+            {
+                b.ToTable("MealLogs", "fit");
+                b.ConfigureByConvention();
+                b.HasMany(x => x.Items).WithOne().HasForeignKey(x => x.MealLogId);
+            });
+
+            builder.Entity<MealLogItem>(b =>
+            {
+                b.ToTable("MealLogItems", "fit");
+                b.ConfigureByConvention();
+                b.HasOne<Meal>().WithMany().HasForeignKey(x => x.MealId);
+            });
+
         }
     }
 }
