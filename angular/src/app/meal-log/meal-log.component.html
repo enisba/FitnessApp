@@ -1,0 +1,92 @@
+<div class="container mt-4">
+  <h2>Meal Logs</h2>
+
+  <!-- Meal Log Form -->
+  <form [formGroup]="form" (ngSubmit)="saveLog()" class="mb-3 row g-2">
+    <div class="col">
+      <input type="date" formControlName="date" class="form-control" />
+    </div>
+    <div class="col">
+      <select formControlName="mealType" class="form-select">
+        <option value="Breakfast">Breakfast</option>
+        <option value="Lunch">Lunch</option>
+        <option value="Dinner">Dinner</option>
+      </select>
+    </div>
+
+    <div formArrayName="items" class="col-12">
+      <div
+        *ngFor="let itemControl of items.controls; let i = index"
+        [formGroupName]="i"
+        class="row g-2 mb-2"
+      >
+        <div class="col">
+          <select formControlName="mealId" class="form-select">
+            <option value="" disabled>Select meal</option>
+            <option *ngFor="let m of meals" [value]="m.id">
+              {{ m.name }} ({{ m.calories }} kcal)
+            </option>
+          </select>
+        </div>
+        <div class="col">
+          <input
+            type="number"
+            formControlName="quantity"
+            class="form-control"
+            placeholder="Quantity"
+          />
+        </div>
+        <div class="col">
+          <button type="button" class="btn btn-danger" (click)="removeItem(i)">
+            Remove
+          </button>
+        </div>
+      </div>
+      <button type="button" class="btn btn-secondary mt-2" (click)="addItem()">
+        + Add Item
+      </button>
+    </div>
+
+    <div class="col-12 mt-3">
+      <button type="submit" class="btn btn-primary">Save Log</button>
+    </div>
+  </form>
+
+  <hr />
+
+  <!-- Log List -->
+  <div *ngIf="logs.length > 0; else noLogs">
+    <div *ngFor="let log of logs" class="card mb-3">
+      <div class="card-header">
+        <strong>{{ log.date | date }}</strong> - {{ log.mealType }}
+      </div>
+      <div class="card-body">
+        <ul>
+          <li *ngFor="let item of log.items">
+            {{ item.mealName }} (x{{ item.quantity }})
+          </li>
+        </ul>
+
+        <!-- Günlük toplam makrolar -->
+        <div class="mt-2">
+          <span class="badge bg-primary me-2">
+            Calories: {{ log.totalCalories }}
+          </span>
+          <span class="badge bg-success me-2">
+            Protein: {{ log.totalProtein }} g
+          </span>
+          <span class="badge bg-info me-2">
+            Carbs: {{ log.totalCarbs }} g
+          </span>
+          <span class="badge bg-warning">
+            Fat: {{ log.totalFat }} g
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noLogs>
+    <p>No logs yet. Add your first meal log above.</p>
+  </ng-template>
+</div>
