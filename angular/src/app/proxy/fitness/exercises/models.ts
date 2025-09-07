@@ -16,6 +16,7 @@ export interface ExerciseDto extends EntityDto<string> {
   name?: string;
   primaryMuscleId?: string;
   difficulty?: Difficulty;
+  primaryMuscleName?: string;
 }
 
 export interface ExerciseListInput extends PagedAndSortedResultRequestDto {
