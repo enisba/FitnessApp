@@ -1,0 +1,59 @@
+<div class="container mt-4">
+  <h2>Meals</h2>
+
+  <!-- Meal Form -->
+  <form [formGroup]="form" (ngSubmit)="saveMeal()" class="mb-3 row g-2">
+    <div class="col">
+      <input formControlName="name" class="form-control" placeholder="Meal name" />
+    </div>
+    <div class="col">
+      <input type="number" formControlName="calories" class="form-control" placeholder="Calories" />
+    </div>
+    <div class="col">
+      <input type="number" formControlName="protein" class="form-control" placeholder="Protein (g)" />
+    </div>
+    <div class="col">
+      <input type="number" formControlName="carbs" class="form-control" placeholder="Carbs (g)" />
+    </div>
+    <div class="col">
+      <input type="number" formControlName="fat" class="form-control" placeholder="Fat (g)" />
+    </div>
+    <div class="col">
+      <button type="submit" class="btn btn-primary">
+        {{ editing ? 'Update' : 'Add' }}
+      </button>
+      <button *ngIf="editing" type="button" class="btn btn-secondary ms-2" (click)="cancelEdit()">
+        Cancel
+      </button>
+    </div>
+  </form>
+
+  <!-- Meals Table -->
+  <div *ngIf="loading">Loading...</div>
+
+  <table class="table table-striped" *ngIf="!loading">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Calories</th>
+        <th>Protein</th>
+        <th>Carbs</th>
+        <th>Fat</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let meal of meals">
+        <td>{{ meal.name }}</td>
+        <td>{{ meal.calories }}</td>
+        <td>{{ meal.protein }}</td>
+        <td>{{ meal.carbs }}</td>
+        <td>{{ meal.fat }}</td>
+        <td>
+          <button class="btn btn-sm btn-warning me-2" (click)="editMeal(meal)">Edit</button>
+          <button class="btn btn-sm btn-danger" (click)="deleteMeal(meal.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
