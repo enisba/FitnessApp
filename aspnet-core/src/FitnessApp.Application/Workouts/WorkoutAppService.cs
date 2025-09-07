@@ -152,7 +152,13 @@ namespace FitnessApp.Fitness.Workouts
 
         public async Task<WorkoutDto> UpdateAsync(Guid id, UpdateWorkoutDto input)
         {
-            var workout = await _workoutRepo.GetAsync(id);
+            var workout = (await _workoutRepo.WithDetailsAsync(x => x.Exercises))
+                          .FirstOrDefault(x => x.Id == id);
+
+            if (workout == null)
+            {
+                throw new Exception("Workout not found");
+            }
 
             workout.UpdateName(input.Name);
             workout.Exercises.Clear();
