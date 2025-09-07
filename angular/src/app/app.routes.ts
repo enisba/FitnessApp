@@ -40,4 +40,10 @@ export const appRoutes: Routes = [
       import('./workout/workout.component').then(m => m.WorkoutComponent), // ✅ yeni route
   },
 
+  {
+  path: 'meals',
+  loadComponent: () =>
+    import('./meal/meal.component').then(m => m.MealComponent),
+}
+
 ];

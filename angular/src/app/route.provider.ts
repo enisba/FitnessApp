@@ -35,7 +35,15 @@ function configureRoutes(routes: RoutesService) {
   iconClass: 'fas fa-dumbbell',
   order: 4,
   layout: eLayoutType.application,
+},
+{
+  path: '/meals',
+  name: 'Meals',
+  iconClass: 'fas fa-utensils',
+  order: 5,
+  layout: eLayoutType.application,
 }
+
 
     ]);
   };
