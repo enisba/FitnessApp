@@ -42,6 +42,13 @@ function configureRoutes(routes: RoutesService) {
   iconClass: 'fas fa-utensils',
   order: 5,
   layout: eLayoutType.application,
+},
+{
+  path: '/meal-logs',
+  name: 'Daily Meal',
+  iconClass: 'fas fa-utensils',
+  order: 6,
+  layout: eLayoutType.application,
 }
 
 

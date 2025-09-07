@@ -44,6 +44,12 @@ export const appRoutes: Routes = [
   path: 'meals',
   loadComponent: () =>
     import('./meal/meal.component').then(m => m.MealComponent),
+},
+{
+  path: 'meal-logs',
+  loadComponent: () =>
+    import('./meal-log/meal-log.component').then(m => m.MealLogComponent),
 }
+
 
 ];
