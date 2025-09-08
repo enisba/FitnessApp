@@ -1,37 +1,57 @@
 <div class="container mt-4">
-  <h2>Muscle Groups</h2>
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h2 class="m-0">Muscle Groups</h2>
 
-  <form [formGroup]="form" (ngSubmit)="save()" class="mb-3 row g-2">
-    <div class="col">
-      <input formControlName="name" class="form-control" placeholder="Name">
-    </div>
-    <div class="col">
-      <input formControlName="parentId" class="form-control" placeholder="Parent Id (optional)">
-    </div>
-    <div class="col">
-      <button type="submit" class="btn btn-primary">
-        {{ editing ? 'Update' : 'Add' }}
-      </button>
-    </div>
-  </form>
+    <button class="btn btn-primary" type="button" (click)="openAdd()">
+      <i class="bi bi-plus-lg"></i> Add Muscle
+    </button>
+  </div>
 
   <table class="table table-striped">
     <thead>
       <tr>
         <th>Name</th>
-        <th>ParentId</th>
-        <th>Actions</th>
+        <th class="text-end">Actions</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let g of groups">
+      <tr *ngFor="let g of groups; trackBy: trackById">
         <td>{{ g.name }}</td>
-        <td>{{ g.parentId }}</td>
-        <td>
-          <button class="btn btn-sm btn-warning me-2" (click)="edit(g)">Edit</button>
+        <td class="text-end">
+          <button class="btn btn-sm btn-warning me-2" (click)="openEdit(g)">Edit</button>
           <button class="btn btn-sm btn-danger" (click)="delete(g.id)">Delete</button>
         </td>
       </tr>
     </tbody>
   </table>
 </div>
+
+<nz-modal
+  [(nzVisible)]="upsertVisible"
+  [nzTitle]="mode === 'create' ? 'Add Muscle' : 'Update Muscle'"
+  [nzCentered]="true"
+  [nzWidth]="480"
+  nzWrapClassName="centered-modal"
+  [nzFooter]="null"
+  [nzMaskClosable]="false"
+  (nzOnCancel)="upsertVisible = false">
+
+  <form *nzModalContent [formGroup]="upsertForm" (ngSubmit)="saveUpsert()" class="d-grid gap-3">
+    <div>
+      <label class="form-label">Name</label>
+      <nz-input-group nzPrefixIcon="edit">
+        <input nz-input formControlName="name" cdkFocusInitial placeholder="e.g., Biceps" />
+      </nz-input-group>
+      <small class="text-danger" *ngIf="upsertForm.controls.name.touched && upsertForm.controls.name.invalid">
+        Required
+      </small>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2">
+      <button type="button" class="btn btn-light" (click)="upsertVisible = false">Cancel</button>
+      <button type="submit" class="btn btn-primary" [disabled]="upsertForm.invalid">
+        {{ mode === 'create' ? 'Create' : 'Save' }}
+      </button>
+    </div>
+  </form>
+</nz-modal>

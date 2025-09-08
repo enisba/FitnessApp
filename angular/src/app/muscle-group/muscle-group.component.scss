@@ -1,0 +1,11 @@
+.centered-modal .ant-modal { top: 0 !important; display: flex; align-items: center; min-height: 100vh; }
+.ant-modal-wrap { z-index: 2000 !important; }
+.ant-select-dropdown { z-index: 2100 !important; }
+
+/* Üst bar düzeni */
+.mg-toolbar { display:flex; gap:.75rem; align-items:center; margin-bottom: .75rem; }
+.mg-toolbar .spacer { flex: 1 1 auto; }
+.modal-form { display: grid; gap: .9rem; }
+.modal-grid { display: grid; gap: .9rem; }
+@media (min-width: 640px) { .modal-grid { grid-template-columns: 1fr 1fr; } }
+.diff-group .btn { min-width: 92px; }
