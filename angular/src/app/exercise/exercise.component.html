@@ -1,60 +1,128 @@
-<div class="container mt-4">
-  <h2>Exercises</h2>
+<!-- ÜST BAR -->
+<form [formGroup]="searchForm" class="toolbar">
+  <!-- Search (solda, genişler) -->
+  <nz-input-group nzPrefixIcon="search" class="grow">
+    <input nz-input formControlName="q" placeholder="Search exercises (e.g., row, press)" />
+  </nz-input-group>
 
-  <form [formGroup]="form" (ngSubmit)="editing ? updateExercise() : addExercise()" class="mb-3">
-    <div class="row">
-      <div class="col">
-        <input formControlName="name" class="form-control" placeholder="Exercise name" />
+  <!-- Difficulty -->
+  <nz-select class="w-100" formControlName="difficulty" nzAllowClear nzPlaceHolder="Difficulty">
+    <nz-option [nzValue]="0" nzLabel="Easy"></nz-option>
+    <nz-option [nzValue]="1" nzLabel="Medium"></nz-option>
+    <nz-option [nzValue]="2" nzLabel="Hard"></nz-option>
+  </nz-select>
+
+  <!-- Muscle -->
+  <nz-select class="w-100" formControlName="muscleId" nzAllowClear nzPlaceHolder="Muscle">
+    <nz-option *ngFor="let m of muscles" [nzValue]="m.id" [nzLabel]="m.name"></nz-option>
+  </nz-select>
+
+  <!-- Aktif filtreleri tek tıkla temizle -->
+  <button type="button" class="btn btn-link toolbar-reset" (click)="resetFilters()" *ngIf="activeBadges.length">Clear</button>
+
+  <!-- Spacer -->
+  <span class="spacer"></span>
+
+  <!-- New (sağda) -->
+  <button class="btn btn-primary" type="button" (click)="openCreate()">
+    <i class="bi bi-plus-lg"></i> New Exercise
+  </button>
+</form>
+
+<!-- Aktif filtre rozetleri -->
+<div class="active-filters" *ngIf="activeBadges.length">
+  <span class="badge bg-secondary-subtle text-body-secondary" *ngFor="let b of activeBadges">{{ b }}</span>
+</div>
+
+<!-- Sonuç sayısı -->
+<div class="results-hint" *ngIf="!loading">{{ exercises.length }} result{{ exercises.length===1?'':'s' }}</div>
+
+<!-- TABLO -->
+<div *ngIf="loading">Loading...</div>
+<table class="table table-hover modern-table" *ngIf="!loading && exercises.length">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Primary Muscle</th>
+      <th>Difficulty</th>
+      <th class="text-end">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let ex of exercises; trackBy: trackById">
+      <td class="name-cell">{{ ex.name }}</td>
+      <td>{{ ex.primaryMuscleName }}</td>
+      <td>
+        <span class="chip" [ngClass]="difficultyMap[ex.difficulty].class">
+          {{ difficultyMap[ex.difficulty].text }}
+        </span>
+      </td>
+      <td class="text-end">
+        <button class="btn btn-sm btn-outline-primary me-2" (click)="openEdit(ex)">Edit</button>
+        <button class="btn btn-sm btn-outline-danger" (click)="delete(ex.id)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="empty" *ngIf="!loading && !exercises.length">
+  <i class="bi bi-emoji-neutral"></i>
+  <div>No exercises match your filters.</div>
+</div>
+
+<!-- UPSERT MODAL (ADD + EDIT) -->
+<nz-modal
+  [(nzVisible)]="upsertVisible"
+  [nzTitle]="mode==='create' ? 'New Exercise' : 'Edit Exercise'"
+  [nzCentered]="true"
+  [nzWidth]="640"
+  nzWrapClassName="centered-modal"
+  [nzFooter]="null"
+  [nzMaskClosable]="false"
+  (nzOnCancel)="upsertVisible=false">
+
+  <!-- KRİTİK: içerik *nzModalContent ile sarmalanır -->
+  <ng-container *nzModalContent>
+    <form [formGroup]="upsertForm" (ngSubmit)="saveUpsert()" class="modal-form">
+      <div class="modal-grid">
+        <div>
+          <label class="form-label">Exercise name</label>
+          <nz-input-group nzPrefixIcon="edit">
+            <input nz-input formControlName="name" cdkFocusInitial placeholder="Incline Dumbbell Press" />
+          </nz-input-group>
+          <small class="text-danger" *ngIf="upsertForm.controls.name.touched && upsertForm.controls.name.invalid">Required</small>
+        </div>
+
+        <div>
+          <label class="form-label">Primary muscle</label>
+          <nz-select formControlName="primaryMuscleId" nzShowSearch nzPlaceHolder="Select muscle" class="w-100">
+            <nz-option *ngFor="let m of muscles" [nzValue]="m.id" [nzLabel]="m.name"></nz-option>
+          </nz-select>
+          <small class="text-danger" *ngIf="upsertForm.controls.primaryMuscleId.touched && upsertForm.controls.primaryMuscleId.invalid">Required</small>
+        </div>
       </div>
 
-      <div class="col">
-        <select formControlName="primaryMuscleId" class="form-select">
-          <option value="" disabled>Select muscle</option>
-          <option *ngFor="let m of muscles" [value]="m.id">{{ m.name }}</option>
-        </select>
+      <div>
+        <div class="form-label">Difficulty</div>
+        <div class="btn-group diff-group" role="group" aria-label="Difficulty">
+          <input type="radio" class="btn-check" name="diff" id="diff-easy" (change)="setDiff(0)" [checked]="upsertForm.value.difficulty===0">
+          <label class="btn btn-outline-success" for="diff-easy">Easy</label>
+
+          <input type="radio" class="btn-check" name="diff" id="diff-med" (change)="setDiff(1)" [checked]="upsertForm.value.difficulty===1">
+          <label class="btn btn-outline-warning" for="diff-med">Medium</label>
+
+          <input type="radio" class="btn-check" name="diff" id="diff-hard" (change)="setDiff(2)" [checked]="upsertForm.value.difficulty===2">
+          <label class="btn btn-outline-danger" for="diff-hard">Hard</label>
+        </div>
       </div>
 
-      <div class="col">
-        <select formControlName="difficulty" class="form-select">
-          <option [value]="0">Easy</option>
-          <option [value]="1">Medium</option>
-          <option [value]="2">Hard</option>
-        </select>
-      </div>
-
-      <div class="col">
-        <button type="submit" class="btn btn-primary">
-          {{ editing ? 'Update' : 'Add' }}
+      <div class="footer">
+        <button type="button" class="btn btn-light" (click)="upsertVisible=false">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="upsertForm.invalid || saving">
+          <span *ngIf="!saving">{{ mode==='create' ? 'Create' : 'Save' }}</span>
+          <span *ngIf="saving">Saving…</span>
         </button>
       </div>
-    </div>
-  </form>
-
-  <div *ngIf="loading">Loading...</div>
-
-  <table class="table table-striped" *ngIf="!loading">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Primary Muscle</th>
-        <th>Difficulty</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let ex of exercises">
-        <td>{{ ex.name }}</td>
-        <td>{{ ex.primaryMuscleName }}</td> 
-        <td>
-          <span [class]="difficultyMap[ex.difficulty].class">
-            {{ difficultyMap[ex.difficulty].text }}
-          </span>
-        </td>
-        <td>
-          <button class="btn btn-sm btn-warning me-2" (click)="editExercise(ex)">Edit</button>
-          <button class="btn btn-sm btn-danger" (click)="deleteExercise(ex.id)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+    </form>
+  </ng-container>
+</nz-modal>

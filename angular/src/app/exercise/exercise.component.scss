@@ -1,0 +1,38 @@
+/* Toolbar: arama solda genişler, New sağa yaslanır */
+.toolbar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .75rem;
+  margin-bottom: .75rem;
+}
+.toolbar .grow { flex: 1 1 280px; min-width: 260px; }
+.toolbar nz-select { min-width: 160px; }
+.toolbar .toolbar-reset { padding: 0 .25rem; }
+.toolbar .spacer { flex: 1 1 auto; }
+
+/* Aktif filtre rozetleri */
+.active-filters { display: flex; gap: .5rem; align-items: center; margin: .25rem 0 .5rem; }
+.results-hint { font-size: .85rem; opacity: .75; margin-bottom: .5rem; }
+
+/* Tablo & çipler */
+.modern-table { border-radius: 12px; overflow: hidden; }
+.name-cell { font-weight: 600; }
+.chip { padding: .15rem .55rem; border-radius: 999px; font-size: .8rem; border: 1px solid transparent; }
+.chip-easy { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.3); color: #0f5132; }
+.chip-medium { background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.3); color: #664d03; }
+.chip-hard { background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.3); color: #842029; }
+
+/* Modal düzeni */
+.modal-form { display: grid; gap: .9rem; }
+.modal-grid { display: grid; gap: .9rem; }
+@media (min-width: 640px) {
+  .modal-grid { grid-template-columns: 1fr 1fr; }
+}
+.diff-group .btn { min-width: 92px; }
+
+/* Overlay ve dropdown z-index (LeptonX kaprisleri) */
+.centered-modal .ant-modal { top: 0 !important; display: flex; align-items: center; min-height: 100vh; }
+.ant-modal-wrap { z-index: 2000 !important; }
+.ant-select-dropdown { z-index: 2100 !important; }
+
+/* Boş durum */
+.empty { text-align: center; opacity: .7; padding: 2rem 0; }
+.empty i { font-size: 28px; display: block; margin-bottom: .5rem; }
