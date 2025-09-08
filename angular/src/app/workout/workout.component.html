@@ -1,154 +1,126 @@
-<div class="container mt-4">
-  <h2>Workouts</h2>
+<div class="container mt-4 workout-page">
+  <div class="page-top">
+    <h2>Workouts</h2>
 
-  <!-- Workout Form -->
-<form [formGroup]="form" (ngSubmit)="saveWorkout()" class="mb-3">
-
-    <div class="mb-3">
-      <input
-        formControlName="name"
-        class="form-control"
-        placeholder="Workout name"
-      />
-    </div>
-
-    <div formArrayName="exercises">
-      <div
-        class="row g-2 align-items-center mb-2"
-        *ngFor="let ex of exerciseArray.controls; let i = index"
-        [formGroupName]="i"
-      >
-        <div class="col">
-          <select formControlName="exerciseId" class="form-select">
-            <option value="" disabled>Select exercise</option>
-            <option *ngFor="let e of exercises" [value]="e.id">
-              {{ e.name }}
-            </option>
-          </select>
-        </div>
-
-        <div class="col">
-          <input
-            type="number"
-            formControlName="sets"
-            class="form-control"
-            placeholder="Sets"
-          />
-        </div>
-
-        <div class="col">
-          <input
-            type="number"
-            formControlName="reps"
-            class="form-control"
-            placeholder="Reps"
-          />
-        </div>
-
-        <div class="col">
-          <input
-            type="number"
-            formControlName="weight"
-            class="form-control"
-            placeholder="Weight (kg)"
-          />
-        </div>
-
-        <div class="col-auto">
-          <button
-            type="button"
-            class="btn btn-danger"
-            (click)="removeExercise(i)"
-          >
-            X
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <button
-      type="button"
-      class="btn btn-secondary mb-3"
-      (click)="addExercise()"
-    >
-      + Add Exercise
+    <!-- Üstte tek buton -->
+    <button class="btn btn-primary" type="button" (click)="openAdd()">
+      <i class="bi bi-plus-lg"></i> Add Workout
     </button>
-
-    <div>
-<button type="submit" class="btn btn-primary">
-  {{ editing ? 'Update Workout' : 'Save Workout' }}
-</button>
-<button
-  *ngIf="editing"
-  type="button"
-  class="btn btn-secondary ms-2"
-  (click)="cancelEdit()"
->
-  Cancel
-</button>
-
-    </div>
-  </form>
+  </div>
 
   <!-- Liste -->
   <div *ngIf="loading">Loading...</div>
 
-  <table class="table table-striped" *ngIf="!loading">
+  <table class="table table-striped modern-table" *ngIf="!loading">
     <thead>
       <tr>
         <th>Name</th>
         <th>Exercises</th>
-        <th>Actions</th>
+        <th class="text-end">Actions</th>
       </tr>
     </thead>
+
     <tbody>
-      <tr *ngFor="let w of workouts">
-        <td>{{ w.name }}</td>
-        <td>
-          <ul class="mb-0">
-            <li *ngFor="let ex of w.exercises">
-              {{ ex.exerciseName }} - {{ ex.sets }}x{{ ex.reps }}
-              <span *ngIf="ex.weight">({{ ex.weight }} kg)</span>
-            </li>
-          </ul>
-        </td>
-        <td>
-          <button
-            class="btn btn-sm btn-info me-2"
-            (click)="showDetails(w)"
-          >
-            Details
-          </button>
-          <button
-            class="btn btn-sm btn-warning me-2"
-            (click)="editWorkout(w)"
-          >
-            Edit
-          </button>
-          <button
-            class="btn btn-sm btn-danger"
-            (click)="deleteWorkout(w.id)"
-          >
-            Delete
-          </button>
-        </td>
-      </tr>
+      <ng-container *ngFor="let w of workouts; trackBy: trackById">
+        <!-- Ana satır -->
+        <tr>
+          <td class="name-cell">{{ w.name }}</td>
+          <td>
+            <ul class="mb-0 compact-ul">
+              <li *ngFor="let ex of w.exercises | slice:0:2">
+                {{ ex.exerciseName }} — {{ ex.sets }}×{{ ex.reps }}
+                <span *ngIf="ex.weight">({{ ex.weight }} kg)</span>
+              </li>
+              <li *ngIf="(w.exercises?.length || 0) > 2" class="muted">+ {{ (w.exercises.length - 2) }} more</li>
+            </ul>
+          </td>
+          <td class="text-end">
+            <button class="btn btn-sm btn-info me-2" (click)="toggleDetails(w)">
+              {{ isExpanded(w.id) ? 'Hide' : 'Details' }}
+            </button>
+            <button class="btn btn-sm btn-warning me-2" (click)="openEdit(w)">Edit</button>
+            <button class="btn btn-sm btn-danger" (click)="deleteWorkout(w.id)">Delete</button>
+          </td>
+        </tr>
+
+        <!-- DETAY SATIRI: genişleyen panel -->
+        <tr *ngIf="isExpanded(w.id)" class="details-row">
+          <td colspan="3">
+            <div class="details-panel">
+              <div class="details-header">
+                <div class="title">{{ w.name }} — Details</div>
+                <button class="btn btn-sm btn-light" (click)="toggleDetails(w)">Close</button>
+              </div>
+
+              <ul class="details-list">
+                <li *ngFor="let ex of w.exercises">
+                  <span class="dot"></span>
+                  <span class="ex-name">{{ ex.exerciseName }}</span>
+                  <span class="sep">—</span>
+                  <span>{{ ex.sets }}×{{ ex.reps }}</span>
+                  <span *ngIf="ex.weight" class="muted">({{ ex.weight }} kg)</span>
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
     </tbody>
   </table>
+</div>
 
-  <!-- Detaylar -->
-  <div *ngIf="details" class="card mt-3">
-    <div class="card-body">
-      <h4>{{ details.name }}</h4>
-      <ul>
-        <li *ngFor="let ex of details.exercises">
-          {{ ex.exerciseName }} - {{ ex.sets }}x{{ ex.reps }}
-          <span *ngIf="ex.weight">({{ ex.weight }} kg)</span>
-        </li>
-      </ul>
-      <button class="btn btn-secondary" (click)="closeDetails()">
-        Close
+<!-- UPSERT MODAL (Add + Edit) -->
+<nz-modal
+  [(nzVisible)]="upsertVisible"
+  [nzTitle]="mode === 'create' ? 'Add Workout' : 'Update Workout'"
+  [nzCentered]="true"
+  [nzWidth]="720"
+  nzWrapClassName="centered-modal"
+  [nzFooter]="null"
+  [nzMaskClosable]="false"
+  (nzOnCancel)="upsertVisible = false">
+
+  <!-- KRİTİK: bazı zorro sürümleri bunu istiyor -->
+  <form *nzModalContent [formGroup]="upsertForm" (ngSubmit)="saveUpsert()" class="modal-form">
+    <div class="grid">
+      <div class="col">
+        <label class="form-label">Workout name</label>
+        <input nz-input class="form-control" formControlName="name" cdkFocusInitial placeholder="e.g., Pull Day A" />
+        <small class="text-danger" *ngIf="upsertForm.controls.name.touched && upsertForm.controls.name.invalid">Required</small>
+      </div>
+    </div>
+
+    <div formArrayName="exercises" class="items">
+      <div class="row g-2 align-items-center item-row" *ngFor="let fg of items.controls; let i = index" [formGroupName]="i">
+        <div class="col-12 col-md">
+          <select formControlName="exerciseId" class="form-select">
+            <option value="" disabled>Select exercise</option>
+            <option *ngFor="let e of exercises" [value]="e.id">{{ e.name }}</option>
+          </select>
+        </div>
+        <div class="col-4 col-md-2">
+          <input type="number" formControlName="sets" class="form-control" placeholder="Sets" />
+        </div>
+        <div class="col-4 col-md-2">
+          <input type="number" formControlName="reps" class="form-control" placeholder="Reps" />
+        </div>
+        <div class="col-4 col-md-2">
+          <input type="number" formControlName="weight" class="form-control" placeholder="Weight (kg)" />
+        </div>
+        <div class="col-auto">
+          <button type="button" class="btn btn-outline-danger" (click)="removeItem(i)">Remove</button>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-outline-secondary mt-2" (click)="addItem()">+ Add Exercise</button>
+    </div>
+
+    <div class="footer">
+      <button type="button" class="btn btn-light" (click)="upsertVisible=false">Cancel</button>
+      <button type="submit" class="btn btn-primary" [disabled]="upsertForm.invalid || items.length === 0 || saving">
+        <span *ngIf="!saving">{{ mode === 'create' ? 'Create' : 'Save' }}</span>
+        <span *ngIf="saving">Saving…</span>
       </button>
     </div>
-  </div>
-</div>
+  </form>
+</nz-modal>
