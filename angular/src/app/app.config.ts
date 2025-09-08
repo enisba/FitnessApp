@@ -18,15 +18,13 @@ import { SideMenuLayoutModule } from '@abp/ng.theme.lepton-x/layouts';
 import { AccountLayoutModule } from '@abp/ng.theme.lepton-x/account';
 import { ThemeSharedModule, withHttpErrorConfig, withValidationBluePrint, provideAbpThemeShared } from '@abp/ng.theme.shared';
 import { provideSideMenuLayout } from '@abp/ng.theme.lepton-x/layouts';
+import { NzModalModule } from 'ng-zorro-antd/modal'; 
 
 export const appConfig: ApplicationConfig = {
-    providers: [
+  providers: [
     provideRouter(appRoutes),
     APP_ROUTE_PROVIDER,
-    provideAbpCore(withOptions({
-        environment,
-        registerLocaleFn: registerLocale(),
-    })),
+    provideAbpCore(withOptions({ environment, registerLocaleFn: registerLocale() })),
     provideSideMenuLayout(),
     provideAbpOAuth(),
     provideSettingManagementConfig(),
@@ -35,8 +33,14 @@ export const appConfig: ApplicationConfig = {
     provideTenantManagementConfig(),
     provideFeatureManagementConfig(),
     provideAnimations(),
-    provideLogo(withEnvironmentOptions(environment)), importProvidersFrom(ThemeLeptonXModule.forRoot(), SideMenuLayoutModule.forRoot(), AccountLayoutModule.forRoot(), ThemeSharedModule), provideAbpThemeShared(withValidationBluePrint({
-        wrongPassword: 'Please choose 1q2w3E*'
-    }))
-],
+    provideLogo(withEnvironmentOptions(environment)),
+    importProvidersFrom(
+      ThemeLeptonXModule.forRoot(),
+      SideMenuLayoutModule.forRoot(),
+      AccountLayoutModule.forRoot(),
+      ThemeSharedModule,
+      NzModalModule 
+    ),
+    provideAbpThemeShared(withValidationBluePrint({ wrongPassword: 'Please choose 1q2w3E*' })),
+  ],
 };
