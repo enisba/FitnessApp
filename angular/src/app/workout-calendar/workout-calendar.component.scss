@@ -1,0 +1,53 @@
+.calendar-wrapper {
+  .header {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: .75rem;
+    h2 { margin: 0; font-weight: 700; }
+    .right { display: flex; align-items: center; gap: .5rem; }
+    .month-label { font-weight: 600; width: 180px; text-align: center; text-transform: capitalize; }
+    .add-btn { margin-left: .5rem; }
+  }
+}
+
+.date-cell {
+  min-height: 110px;
+  padding: .4rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background .15s ease;
+}
+.date-cell:hover { background: #f6f8ff; }
+
+.date-num { font-weight: 700; opacity: .7; }
+
+.badges { margin-top: .25rem; display: grid; gap: .25rem; }
+.badge {
+  padding: .1rem .45rem;
+  border-radius: 12px;
+  font-size: .72rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  background: #f2f2f2;
+}
+.badge.workout  { background: #e8f7ee; color: #0f5132; }
+.badge.exercise { background: #e7f1ff; color: #084298; }
+.more { font-size: .7rem; color: rgba(0,0,0,.55); }
+
+.existing .ex-title { font-weight: 600; margin-bottom: .25rem; }
+.existing .ex-list { list-style: none; padding: 0; margin: 0 0 .6rem; }
+.existing .ex-list li { display: flex; align-items: center; gap: .5rem; padding: .2rem 0; }
+.tag { padding: .1rem .55rem; border-radius: 12px; background: #f2f2f2; }
+.tag.workout  { background: #e8f7ee; color: #0f5132; }
+.tag.exercise { background: #e7f1ff; color: #084298; }
+.muted { color: rgba(0,0,0,.55); }
+
+.form-grid { display: grid; gap: .6rem; }
+.row { display: grid; gap: .25rem; }
+.row.two { grid-template-columns: 1fr 1fr; gap: .6rem; }
+.row.three { grid-template-columns: repeat(3, 1fr); gap: .6rem; }
+.lbl { font-size: .85rem; opacity: .85; }
+.footer { display: flex; justify-content: flex-end; gap: .5rem; margin-top: .5rem; }
+
+/* Zorro takvim padding ayarı (opsiyonel) */
+:host ::ng-deep .ant-picker-calendar-date { padding: 6px 8px; }/* Takvim görünürlük zırhı */
+:host ::ng-deep nz-calendar { display: block !important; width: 100% !important; }
+:host ::ng-deep .ant-picker-calendar { background: #fff; }
+
