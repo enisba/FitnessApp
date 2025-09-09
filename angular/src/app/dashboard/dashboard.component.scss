@@ -1,5 +1,33 @@
-.dashboard {
-  h2 { font-weight: 700; margin-bottom: 1rem; }
-  nz-card { border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,.05); }
-  .table { width: 100%; font-size: .9rem; }
+.dash {
+  padding-top: 12px;
+}
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  h2 { margin: 0; }
+  .sub { color: #888; }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    button { min-width: 80px; }
+  }
+}
+
+.kpis .kpi {
+  .kpi-title { color: #888; font-size: 13px; }
+  .kpi-value { font-size: 28px; font-weight: 700; line-height: 1.1; margin-top: 6px; }
+}
+
+.charts nz-card { height: 100%; }
+
+.tips ul {
+  margin: 0;
+  padding-left: 18px;
+  li { margin-bottom: 6px; }
 }
