@@ -49,7 +49,14 @@ function configureRoutes(routes: RoutesService) {
   iconClass: 'fas fa-utensils',
   order: 6,
   layout: eLayoutType.application,
-}
+},
+ {
+    path: '/calendar',
+    name: 'Daily Workout',
+    iconClass: 'fas fa-calendar',
+    order: 7,
+    layout: eLayoutType.application,
+  },
 
 
     ]);

@@ -19,6 +19,8 @@ import { AccountLayoutModule } from '@abp/ng.theme.lepton-x/account';
 import { ThemeSharedModule, withHttpErrorConfig, withValidationBluePrint, provideAbpThemeShared } from '@abp/ng.theme.shared';
 import { provideSideMenuLayout } from '@abp/ng.theme.lepton-x/layouts';
 import { NzModalModule } from 'ng-zorro-antd/modal'; 
+import { NZ_I18N, tr_TR } from 'ng-zorro-antd/i18n';
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -27,6 +29,9 @@ export const appConfig: ApplicationConfig = {
     provideAbpCore(withOptions({ environment, registerLocaleFn: registerLocale() })),
     provideSideMenuLayout(),
     provideAbpOAuth(),
+    provideAnimations(),
+    APP_ROUTE_PROVIDER,
+    { provide: NZ_I18N, useValue: tr_TR }, 
     provideSettingManagementConfig(),
     provideAccountConfig(),
     provideIdentityConfig(),
