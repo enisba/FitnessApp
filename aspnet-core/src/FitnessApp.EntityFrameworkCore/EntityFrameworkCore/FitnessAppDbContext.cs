@@ -6,6 +6,7 @@ using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
@@ -59,6 +60,8 @@ IOpenIddictDbContext
     public DbSet<OpenIddictScope> Scopes { get; set; }
     public DbSet<OpenIddictToken> Tokens { get; set; }
 
+    public DbSet<FitnessApp.Workouts.WorkoutLog> WorkoutLogs { get; set; }
+
     #endregion
 
     public FitnessAppDbContext(DbContextOptions<FitnessAppDbContext> options)
@@ -81,6 +84,15 @@ IOpenIddictDbContext
         builder.ConfigureFeatureManagement();
         builder.ConfigureTenantManagement();
         OnModelCreating_Fitness(builder);
+        builder.Entity<FitnessApp.Workouts.WorkoutLog>(b =>
+        {
+            b.ToTable("AppWorkoutLogs");
+            b.ConfigureByConvention();
+            b.Property(x => x.Date).IsRequired().HasColumnType("date"); ;
+            b.Property(x => x.Type).IsRequired();
+            b.Property(x => x.Notes).HasMaxLength(1024);
+            b.HasIndex(x => x.Date);
+        });
     }
 
     partial void OnModelCreating_Fitness(ModelBuilder builder);
