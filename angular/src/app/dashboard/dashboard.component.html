@@ -1,0 +1,77 @@
+<div class="dashboard container mt-4">
+  <h2 class="mb-3">My Fitness Dashboard</h2>
+
+  <!-- KPI Kartları -->
+  <div nz-row nzGutter="16" class="mb-3">
+    <div nz-col [nzSm]="12" [nzMd]="6">
+      <nz-card>
+        <nz-statistic [nzValue]="workoutsThisWeek" [nzSuffix]="'/ ' + weeklyGoal" [nzTitle]="'Workouts This Week'"></nz-statistic>
+        <nz-progress [nzPercent]="(workoutsThisWeek/weeklyGoal*100)" nzSize="small"></nz-progress>
+      </nz-card>
+    </div>
+    <div nz-col [nzSm]="12" [nzMd]="6">
+      <nz-card>
+        <nz-statistic [nzValue]="caloriesThisWeek" [nzSuffix]="' kcal'" [nzTitle]="'Calories This Week'"></nz-statistic>
+      </nz-card>
+    </div>
+    <div nz-col [nzSm]="12" [nzMd]="6">
+      <nz-card>
+        <nz-statistic [nzValue]="activeDays" [nzSuffix]="' days'" [nzTitle]="'Active Days'"></nz-statistic>
+      </nz-card>
+    </div>
+  </div>
+
+  <!-- Chartlar -->
+  <div nz-row nzGutter="16" class="mb-3">
+    <div nz-col [nzMd]="12">
+      <nz-card>
+        <apx-chart
+          [series]="workoutTrend.series"
+          [chart]="workoutTrend.chart"
+          [xaxis]="workoutTrend.xaxis"
+          [title]="workoutTrend.title">
+        </apx-chart>
+      </nz-card>
+    </div>
+    <div nz-col [nzMd]="12">
+      <nz-card>
+        <apx-chart
+          [series]="muscleSplit.series"
+          [chart]="muscleSplit.chart"
+          [xaxis]="muscleSplit.xaxis"
+          [title]="muscleSplit.title">
+        </apx-chart>
+      </nz-card>
+    </div>
+  </div>
+
+  <div nz-row nzGutter="16" class="mb-3">
+    <div nz-col [nzMd]="12">
+      <nz-card>
+        <apx-chart
+          [series]="nutritionSplit.series"
+          [chart]="nutritionSplit.chart"
+          [labels]="nutritionSplit.labels"
+          [title]="nutritionSplit.title"
+          [responsive]="nutritionSplit.responsive">
+        </apx-chart>
+      </nz-card>
+    </div>
+    <div nz-col [nzMd]="12">
+      <nz-card nzTitle="Recent Workouts">
+        <table class="table">
+          <thead>
+            <tr><th>Name</th><th>Date</th><th>Summary</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let w of recentWorkouts">
+              <td>{{ w.name }}</td>
+              <td>{{ w.date | date:'mediumDate' }}</td>
+              <td>{{ w.summary }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </nz-card>
+    </div>
+  </div>
+</div>
