@@ -1,4 +1,5 @@
 ﻿using Volo.Abp.Account;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
@@ -25,6 +26,9 @@ public class FitnessAppApplicationModule : AbpModule
     {
         Configure<AbpAutoMapperOptions>(options =>
         {
+            LimitedResultRequestDto.DefaultMaxResultCount = 100;
+
+            LimitedResultRequestDto.MaxMaxResultCount = 5000;
             options.AddMaps<FitnessAppApplicationModule>();
         });
     }
