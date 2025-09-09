@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using FitnessApp.Fitness.Exercises;
 using FitnessApp.Fitness.Nutritions;
+using FitnessApp.Fitness.Workouts;
+using FitnessApp.Workouts;
 
 namespace FitnessApp
 {
@@ -15,6 +17,8 @@ namespace FitnessApp
             CreateMap<Meal, MealDto>();
             CreateMap<CreateMealDto, Meal>();
             CreateMap<UpdateMealDto, Meal>();
+            CreateMap<WorkoutLog, WorkoutLogDto>();
+            CreateMap<CreateUpdateWorkoutLogDto, WorkoutLog>();
         }
     }
 }
