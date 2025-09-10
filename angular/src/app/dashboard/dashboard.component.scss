@@ -1,33 +1,43 @@
 .dash {
-  padding-top: 12px;
-}
-
-.head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
-
-  h2 { margin: 0; }
-  .sub { color: #888; }
-
-  .actions {
-    display: flex;
-    gap: 8px;
-    button { min-width: 80px; }
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    .left { display: flex; flex-direction: column; }
+    h2 { margin: 0; }
+    .sub { color: #6b7280; font-size: 13px; margin-top: 2px; }
+    .right > button { margin-left: 8px; }
   }
+
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0,1fr));
+    gap: 12px;
+  }
+
+  .kpi {
+    min-height: 120px;
+    .kpi-title { color: #6b7280; font-size: 13px; }
+    .kpi-value { font-size: 28px; font-weight: 700; margin-top: 6px; }
+    .kpi-diff { margin-top: 8px; display: flex; align-items: center; gap: 8px;
+      &.up   span:first-child { color: #10b981; }
+      &.down span:first-child { color: #ef4444; }
+      .muted { color: #9ca3af; font-size: 12px; }
+    }
+    &.loading { background: repeating-linear-gradient( 90deg, #f3f4f6 0, #f3f4f6 10px, #ffffff 10px, #ffffff 20px ); height: 120px; }
+  }
+
+  .log-list {
+    list-style: none; padding: 0; margin: 0;
+    li { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px dashed #eee; }
+    .name { font-weight: 600; }
+    .muted { color: #9ca3af; font-size: 13px; }
+  }
+
+  .empty { color: #6b7280; }
 }
 
-.kpis .kpi {
-  .kpi-title { color: #888; font-size: 13px; }
-  .kpi-value { font-size: 28px; font-weight: 700; line-height: 1.1; margin-top: 6px; }
+@media (max-width: 992px) {
+  .dash .kpis { grid-template-columns: repeat(2, minmax(0,1fr)); }
 }
-
-.charts nz-card { height: 100%; }
-
-.tips ul {
-  margin: 0;
-  padding-left: 18px;
-  li { margin-bottom: 6px; }
+@media (max-width: 576px) {
+  .dash .kpis { grid-template-columns: 1fr; }
 }

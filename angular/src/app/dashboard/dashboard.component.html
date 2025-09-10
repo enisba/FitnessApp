@@ -1,104 +1,106 @@
-<div class="dash container">
-
-  <div class="head">
-    <div>
-      <h2>Dashboard</h2>
-      <div class="sub">Summary for
-        <strong>{{ month() | date:'MMMM yyyy' }}</strong>
-      </div>
+<div class="dash container mt-4">
+  <div class="header">
+    <div class="left">
+      <h2>Weekly Dashboard</h2>
+      <div class="sub">{{ weekLabel() }}</div>
     </div>
-    <div class="actions">
-      <button nz-button nzType="default" (click)="prevMonth()">‹ Prev</button>
-+ <button nz-button nzType="default" (click)="setMonthToday()">Today</button>
-      <button nz-button nzType="default" (click)="nextMonth()">Next ›</button>
-      <button nz-button nzType="primary" (click)="fetchAll()">Refresh</button>
+    <div class="right">
+      <button nz-button nzType="default" (click)="goPrevWeek()">‹ Prev</button>
+      <button nz-button nzType="default" (click)="goThisWeek()">This Week</button>
+      <button nz-button nzType="default" (click)="goNextWeek()">Next ›</button>
     </div>
   </div>
 
-  <nz-spin [nzSpinning]="loading()">
-    <!-- KPIs -->
-    <div nz-row [nzGutter]="16" class="kpis">
-      <div nz-col [nzXs]="24" [nzSm]="12" [nzLg]="6">
-        <nz-card class="kpi">
-          <div class="kpi-title">Workout Days</div>
-          <div class="kpi-value">{{ kpi_workoutDays() }}</div>
-        </nz-card>
+  <!-- KPIs -->
+  <div class="kpis" *ngIf="!loading(); else skeleton">
+    <nz-card class="kpi">
+      <div class="kpi-title">Sessions</div>
+      <div class="kpi-value">{{ kpi().sessions }}</div>
+      <div class="kpi-tags">
+        <nz-tag nzColor="success">Easy: {{ kpi().easy }}</nz-tag>
+        <nz-tag nzColor="warning">Medium: {{ kpi().medium }}</nz-tag>
+        <nz-tag nzColor="error">Hard: {{ kpi().hard }}</nz-tag>
       </div>
+    </nz-card>
 
-      <div nz-col [nzXs]="24" [nzSm]="12" [nzLg]="6">
-        <nz-card class="kpi">
-          <div class="kpi-title">Total Sessions</div>
-          <div class="kpi-value">{{ kpi_totalSessions() }}</div>
-        </nz-card>
-      </div>
+    <nz-card class="kpi chart-card">
+      <div class="card-title">Sessions (This vs Last Week)</div>
+      <apx-chart
+        [series]="sessionsSeries"
+        [chart]="sessionsOpts.chart"
+        [dataLabels]="sessionsOpts.dataLabels"
+        [stroke]="sessionsOpts.stroke"
+        [xaxis]="sessionsOpts.xaxis"
+        [yaxis]="sessionsOpts.yaxis"
+        [legend]="sessionsOpts.legend"
+        [grid]="sessionsOpts.grid"
+        [tooltip]="sessionsOpts.tooltip">
+      </apx-chart>
+    </nz-card>
 
-      <div nz-col [nzXs]="24" [nzSm]="12" [nzLg]="6">
-        <nz-card class="kpi">
-          <div class="kpi-title">Total Minutes</div>
-          <div class="kpi-value">{{ kpi_totalMinutes() }}</div>
-        </nz-card>
-      </div>
+    <nz-card class="kpi chart-card">
+      <div class="card-title">Difficulty Split</div>
+      <apx-chart
+  [series]="difficultySeries"
+  [chart]="{ type: 'donut', height: 260 }"
+  [labels]="['Easy','Medium','Hard']"
+  [legend]="{ position: 'bottom' }"
+  [tooltip]="tooltipPlain">
+      </apx-chart>
+    </nz-card>
 
-      <div nz-col [nzXs]="24" [nzSm]="12" [nzLg]="6">
-        <nz-card class="kpi">
-          <div class="kpi-title">Unique Exercises</div>
-          <div class="kpi-value">{{ kpi_uniqueExercises() }}</div>
-        </nz-card>
-      </div>
+    <nz-card class="kpi chart-card">
+      <div class="card-title">Top Muscles (Hits)</div>
+      <apx-chart
+        [series]="topMuscleSeries"
+        [chart]="topMuscleOpts.chart"
+        [dataLabels]="topMuscleOpts.dataLabels"
+        [stroke]="topMuscleOpts.stroke"
+        [xaxis]="topMuscleOpts.xaxis"
+        [yaxis]="topMuscleOpts.yaxis"
+        [legend]="topMuscleOpts.legend"
+        [grid]="topMuscleOpts.grid"
+        [tooltip]="topMuscleOpts.tooltip">
+      </apx-chart>
+    </nz-card>
+  </div>
+
+  <ng-template #skeleton>
+    <div class="kpis">
+      <nz-card class="kpi loading"></nz-card>
+      <nz-card class="kpi loading"></nz-card>
+      <nz-card class="kpi loading"></nz-card>
+      <nz-card class="kpi loading"></nz-card>
     </div>
+  </ng-template>
 
-    <!-- Charts -->
-    <div nz-row [nzGutter]="16" class="charts">
-      <div nz-col [nzXs]="24" [nzLg]="14">
-        <nz-card nzTitle="Daily volume">
-          <apx-chart
-            [series]="lineSeries"
-            [chart]="lineOpts"
-            [xaxis]="lineOpts.xaxis"
-            [dataLabels]="lineOpts.dataLabels"
-            [stroke]="lineOpts.stroke"
-            [fill]="lineOpts.fill"
-            [tooltip]="lineOpts.tooltip"
-            [legend]="lineOpts.legend">
-          </apx-chart>
-        </nz-card>
-      </div>
-
-      <div nz-col [nzXs]="24" [nzLg]="10">
-        <nz-card nzTitle="Muscle groups (top 6)">
-          <apx-chart
-            [series]="barSeries"
-            [chart]="barOpts"
-            [plotOptions]="barOpts.plotOptions"
-            [xaxis]="barOpts.xaxis"
-            [dataLabels]="barOpts.dataLabels"
-            [legend]="barOpts.legend">
-          </apx-chart>
-        </nz-card>
-      </div>
-
-      <div nz-col [nzXs]="24" [nzLg]="10">
-        <nz-card nzTitle="Difficulty split">
-          <apx-chart
-            [series]="donutSeries"
-            [chart]="donutOpts"
-            [labels]="donutLabels"
-            [legend]="donutOpts.legend"
-            [responsive]="donutOpts.responsive">
-          </apx-chart>
-        </nz-card>
-      </div>
-
-      <div nz-col [nzXs]="24" [nzLg]="14">
-        <nz-card class="tips" nzTitle="This month quick facts">
-          <ul>
-            <li>Active days: <strong>{{ kpi_workoutDays() }}</strong></li>
-            <li>Total sessions: <strong>{{ kpi_totalSessions() }}</strong></li>
-            <li>Total minutes: <strong>{{ kpi_totalMinutes() }}</strong></li>
-            <li>Unique exercises: <strong>{{ kpi_uniqueExercises() }}</strong></li>
-          </ul>
-        </nz-card>
-      </div>
+  <!-- Nutrition -->
+  <div class="row mt-3">
+    <div class="col-12 col-lg-5">
+      <nz-card nzTitle="Weekly Macros">
+        <apx-chart
+           [series]="macrosDonutSeries"
+  [chart]="macrosDonutOpts.chart"
+  [labels]="macrosDonutOpts.labels"
+  [legend]="macrosDonutOpts.legend"
+  [tooltip]="macrosDonutOpts.tooltip">
+        </apx-chart>
+      </nz-card>
     </div>
-  </nz-spin>
+    <div class="col-12 col-lg-7">
+      <nz-card nzTitle="Daily Macros (g)">
+        <apx-chart
+          [series]="macrosStackedSeries"
+          [chart]="macrosStackedOpts.chart"
+          [dataLabels]="macrosStackedOpts.dataLabels"
+          [stroke]="macrosStackedOpts.stroke"
+          [xaxis]="macrosStackedOpts.xaxis"
+          [yaxis]="macrosStackedOpts.yaxis"
+          [legend]="macrosStackedOpts.legend"
+          [grid]="macrosStackedOpts.grid"
+          [tooltip]="macrosStackedOpts.tooltip">
+        </apx-chart>
+      </nz-card>
+    </div>
+  </div>
 </div>
