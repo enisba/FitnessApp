@@ -9,28 +9,26 @@
     </div>
   </div>
 
-  <!-- SADE: önce takvimi kesin gösterelim -->
+  <ng-template #fullCell let-current>
+    <div class="date-cell" (click)="onSelect(current)">
+      <div class="date-num">{{ current.getDate() }}</div>
+
+      <div class="badges" *ngIf="logsOf(current).length">
+        <div class="badge"
+             *ngFor="let l of top3(current); trackBy: trackById"
+             [ngClass]="{ workout: l.type===0, exercise: l.type===1 }">
+          {{ l.type===0 ? (l.workoutName || 'Workout') : (l.exerciseName || 'Exercise') }}
+        </div>
+        <div class="more" *ngIf="logsOf(current).length > 3">+{{ logsOf(current).length - 3 }}</div>
+      </div>
+    </div>
+  </ng-template>
+
   <nz-calendar
     [nzMode]="'month'"
     [nzValue]="viewDate()"
-    (nzValueChange)="onMonthChanged($event)">
-
-    <!-- Hücre şablonunu İÇERİDE directive ile ver -->
-    <ng-template nzDateFullCell let-current>
-      <div class="date-cell" (click)="onSelect(current)">
-        <div class="date-num">{{ current.getDate() }}</div>
-
-        <div class="badges" *ngIf="logsOf(current).length">
-          <div class="badge"
-               *ngFor="let l of top3(current); trackBy: trackById"
-               [ngClass]="{ workout: l.type===0, exercise: l.type===1 }">
-            {{ l.type===0 ? (l.workoutName || 'Workout') : (l.exerciseName || 'Exercise') }}
-          </div>
-          <div class="more" *ngIf="logsOf(current).length > 3">+{{ logsOf(current).length - 3 }}</div>
-        </div>
-      </div>
-    </ng-template>
-
+    (nzValueChange)="onMonthChanged($event)"
+    [nzDateFullCell]="fullCell">
   </nz-calendar>
 </div>
 
@@ -58,12 +56,10 @@
           <button nz-button nzType="link" (click)="removeLog(l.id!)">Delete</button>
         </li>
       </ul>
-      <hr />
+      <hr>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="save()" autocomplete="off" class="form-grid">
-
-      <!-- Tip seçimi -->
       <div class="row">
         <label class="lbl">Type</label>
         <nz-radio-group formControlName="type">
@@ -72,7 +68,6 @@
         </nz-radio-group>
       </div>
 
-      <!-- Workout modu: SADECE workout seçimi -->
       <div class="row" *ngIf="form.value.type==='workout'">
         <label class="lbl">Workout</label>
         <nz-select formControlName="workoutId" nzShowSearch nzPlaceHolder="Select workout" class="w-100">
@@ -80,7 +75,6 @@
         </nz-select>
       </div>
 
-      <!-- Exercise modu: exercise seçimi + (sets/reps/weight + duration) -->
       <div class="row" *ngIf="form.value.type==='exercise'">
         <label class="lbl">Exercise</label>
         <nz-select formControlName="exerciseId" nzShowSearch nzPlaceHolder="Select exercise" class="w-100">
@@ -88,36 +82,38 @@
         </nz-select>
       </div>
 
-      <!-- Sadece EXERCISE iken görünsün -->
-      <div class="row three" *ngIf="form.value.type==='exercise'">
-        <div>
-          <label class="lbl">Sets</label>
-          <input nz-input type="number" formControlName="sets" placeholder="e.g., 4" />
-        </div>
-        <div>
-          <label class="lbl">Reps</label>
-          <input nz-input type="number" formControlName="reps" placeholder="e.g., 10" />
-        </div>
-        <div>
-          <label class="lbl">Weight (kg)</label>
-          <input nz-input type="number" formControlName="weight" placeholder="e.g., 60" />
-        </div>
-      </div>
+<div class="row" *ngIf="form.value.type==='workout'">
+  <label class="lbl">Notes</label>
+  <input nz-input type="text" formControlName="notes" placeholder="Optional note">
+</div>
 
-      <!-- Sadece EXERCISE iken görünsün -->
-      <div class="row two" *ngIf="form.value.type==='exercise'">
-        <div>
-          <label class="lbl">Duration (min)</label>
-          <input nz-input type="number" formControlName="durationMinutes" placeholder="e.g., 45" />
-        </div>
-        <div></div>
-      </div>
+<div *ngIf="form.value.type==='exercise'">
+  <div class="row three">
+    <div>
+      <label class="lbl">Sets</label>
+      <input nz-input type="number" formControlName="sets" placeholder="e.g., 4">
+    </div>
+    <div>
+      <label class="lbl">Reps</label>
+      <input nz-input type="number" formControlName="reps" placeholder="e.g., 10">
+    </div>
+    <div>
+      <label class="lbl">Weight (kg)</label>
+      <input nz-input type="number" formControlName="weight" placeholder="e.g., 60">
+    </div>
+  </div>
 
-      <!-- NOTES: her iki modda da görünsün (opsiyonel) -->
-      <div class="row">
-        <label class="lbl">Notes</label>
-        <input nz-input type="text" formControlName="notes" placeholder="Optional note" />
-      </div>
+  <div class="row two">
+    <div>
+      <label class="lbl">Duration (min)</label>
+      <input nz-input type="number" formControlName="durationMinutes" placeholder="e.g., 45">
+    </div>
+    <div>
+      <label class="lbl">Notes</label>
+      <input nz-input type="text" formControlName="notes" placeholder="Optional note">
+    </div>
+  </div>
+</div>
 
       <div class="footer">
         <button nz-button type="button" (click)="closeModal()">Cancel</button>

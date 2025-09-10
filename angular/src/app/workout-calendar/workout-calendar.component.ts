@@ -41,7 +41,6 @@ type DayKey = string;
   styleUrls: ['./workout-calendar.component.scss'],
 })
 export class WorkoutCalendarComponent implements OnInit {
-  // State
   viewDate = signal(new Date());
   selectedDate = signal(new Date());
   modalVisible = signal(false);
@@ -52,10 +51,8 @@ export class WorkoutCalendarComponent implements OnInit {
   workouts = signal<WorkoutDto[]>([]);
   exercises = signal<ExerciseDto[]>([]);
 
-  // Gün bazında grupla
   byDay = computed(() => this.groupByDay(this.logs()));
 
-  // Başlıklar
   monthLabel = computed(() =>
     new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' })
       .format(this.viewDate())
@@ -67,9 +64,8 @@ export class WorkoutCalendarComponent implements OnInit {
     }).format(this.selectedDate())
   );
 
-  // Form
   form = this.fb.group({
-    type: ['workout', Validators.required], // 'workout' | 'exercise'
+    type: ['workout', Validators.required], 
     workoutId: [null as string | null],
     exerciseId: [null as string | null],
     sets: [null as number | null],
@@ -92,7 +88,6 @@ export class WorkoutCalendarComponent implements OnInit {
     this.loadMonth(this.viewDate());
   }
 
-  // ----------------- UI actions -----------------
   goPrev() {
     const d = this.viewDate();
     this.onMonthChanged(new Date(d.getFullYear(), d.getMonth() - 1, 1));
@@ -136,7 +131,6 @@ export class WorkoutCalendarComponent implements OnInit {
     this.loadMonth(d);
   }
 
-  // ----------------- Save / Delete -----------------
   save() {
     const v = this.form.getRawValue();
 
@@ -181,7 +175,6 @@ export class WorkoutCalendarComponent implements OnInit {
     });
   }
 
-  // ----------------- Data load -----------------
   loadLookups() {
     this.workoutSvc.getList({ maxResultCount: 200 }).subscribe(res => this.workouts.set(res.items ?? []));
     this.exerciseSvc.getList({ maxResultCount: 500 }).subscribe(res => this.exercises.set(res.items ?? []));
@@ -198,7 +191,6 @@ export class WorkoutCalendarComponent implements OnInit {
     });
   }
 
-  // ----------------- Helpers -----------------
   private formatDate(d: Date): string {
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, '0');

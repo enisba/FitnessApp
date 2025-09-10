@@ -46,8 +46,16 @@
 .lbl { font-size: .85rem; opacity: .85; }
 .footer { display: flex; justify-content: flex-end; gap: .5rem; margin-top: .5rem; }
 
-/* Zorro takvim padding ayarı (opsiyonel) */
-:host ::ng-deep .ant-picker-calendar-date { padding: 6px 8px; }/* Takvim görünürlük zırhı */
+:host ::ng-deep .ant-picker-calendar-date { padding: 6px 8px; }
 :host ::ng-deep nz-calendar { display: block !important; width: 100% !important; }
 :host ::ng-deep .ant-picker-calendar { background: #fff; }
 
+:host ::ng-deep .ant-picker-calendar-full .ant-picker-panel,
+:host ::ng-deep .ant-picker-calendar-full .ant-picker-body {
+  display: block !important;
+}
+
+:host ::ng-deep .ant-picker-calendar-date {
+  min-height: 110px;
+  padding: 6px 8px;
+}
