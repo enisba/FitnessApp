@@ -1,22 +1,22 @@
 <div class="container mt-4 workout-page">
   <div class="page-top">
-    <h2>Workouts</h2>
+<h2>{{ 'WORKOUT.TITLE' | translate }}</h2>
 
     <!-- Üstte tek buton -->
-    <button class="btn btn-primary" type="button" (click)="openAdd()">
-      <i class="bi bi-plus-lg"></i> Add Workout
-    </button>
+   <button class="btn btn-primary" type="button" (click)="openAdd()">
+  <i class="bi bi-plus-lg"></i> {{ 'WORKOUT.ADD' | translate }}
+</button>
   </div>
 
   <!-- Liste -->
-  <div *ngIf="loading">Loading...</div>
+<div *ngIf="loading">{{ 'WORKOUT.LOADING' | translate }}</div>
 
   <table class="table table-striped modern-table" *ngIf="!loading">
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Exercises</th>
-        <th class="text-end">Actions</th>
+        <th>{{ 'WORKOUT.NAME' | translate }}</th>
+<th>{{ 'WORKOUT.EXERCISES' | translate }}</th>
+<th class="text-end">{{ 'WORKOUT.ACTIONS' | translate }}</th>
       </tr>
     </thead>
 
@@ -31,16 +31,17 @@
                 {{ ex.exerciseName }} — {{ ex.sets }}×{{ ex.reps }}
                 <span *ngIf="ex.weight">({{ ex.weight }} kg)</span>
               </li>
-              <li *ngIf="(w.exercises?.length || 0) > 2" class="muted">+ {{ (w.exercises.length - 2) }} more</li>
-            </ul>
+<li *ngIf="(w.exercises?.length || 0) > 2" class="muted">
+  + {{ (w.exercises.length - 2) }} {{ 'WORKOUT.MORE' | translate }}
+</li>            </ul>
           </td>
           <td class="text-end">
             <button class="btn btn-sm btn-info me-2" (click)="toggleDetails(w)">
-              {{ isExpanded(w.id) ? 'Hide' : 'Details' }}
-            </button>
-            <button class="btn btn-sm btn-warning me-2" (click)="openEdit(w)">Edit</button>
-            <button class="btn btn-sm btn-danger" (click)="deleteWorkout(w.id)">Delete</button>
-          </td>
+  {{ isExpanded(w.id) ? ('WORKOUT.HIDE' | translate) : ('WORKOUT.DETAILS' | translate) }}
+</button>
+           <button class="btn btn-sm btn-warning me-2" (click)="openEdit(w)">{{ 'WORKOUT.EDIT' | translate }}</button>
+<button class="btn btn-sm btn-danger" (click)="deleteWorkout(w.id)">{{ 'WORKOUT.DELETE' | translate }}</button>
+</td>
         </tr>
 
         <!-- DETAY SATIRI: genişleyen panel -->
@@ -48,8 +49,9 @@
           <td colspan="3">
             <div class="details-panel">
               <div class="details-header">
-                <div class="title">{{ w.name }} — Details</div>
-                <button class="btn btn-sm btn-light" (click)="toggleDetails(w)">Close</button>
+                <div class="title">{{ w.name }} — {{ 'WORKOUT.DETAILS' | translate }}</div>
+<button class="btn btn-sm btn-light" (click)="toggleDetails(w)">{{ 'WORKOUT.CLOSE' | translate }}</button>
+
               </div>
 
               <ul class="details-list">
@@ -72,7 +74,7 @@
 <!-- UPSERT MODAL (Add + Edit) -->
 <nz-modal
   [(nzVisible)]="upsertVisible"
-  [nzTitle]="mode === 'create' ? 'Add Workout' : 'Update Workout'"
+[nzTitle]="mode === 'create' ? ('WORKOUT.ADD' | translate) : ('WORKOUT.UPDATE' | translate)"
   [nzCentered]="true"
   [nzWidth]="720"
   nzWrapClassName="centered-modal"
@@ -84,42 +86,43 @@
   <form *nzModalContent [formGroup]="upsertForm" (ngSubmit)="saveUpsert()" class="modal-form">
     <div class="grid">
       <div class="col">
-        <label class="form-label">Workout name</label>
+<label class="form-label">{{ 'WORKOUT.NAME' | translate }}</label>
         <input nz-input class="form-control" formControlName="name" cdkFocusInitial placeholder="e.g., Pull Day A" />
-        <small class="text-danger" *ngIf="upsertForm.controls.name.touched && upsertForm.controls.name.invalid">Required</small>
-      </div>
+<small class="text-danger" *ngIf="upsertForm.controls.name.touched && upsertForm.controls.name.invalid">
+  {{ 'WORKOUT.REQUIRED' | translate }}
+</small>      </div>
     </div>
 
     <div formArrayName="exercises" class="items">
       <div class="row g-2 align-items-center item-row" *ngFor="let fg of items.controls; let i = index" [formGroupName]="i">
         <div class="col-12 col-md">
           <select formControlName="exerciseId" class="form-select">
-            <option value="" disabled>Select exercise</option>
+<option value="" disabled>{{ 'WORKOUT.SELECT_EXERCISE' | translate }}</option>
             <option *ngFor="let e of exercises" [value]="e.id">{{ e.name }}</option>
           </select>
         </div>
         <div class="col-4 col-md-2">
-          <input type="number" formControlName="sets" class="form-control" placeholder="Sets" />
+<input type="number" formControlName="sets" class="form-control" placeholder="{{ 'WORKOUT.SETS' | translate }}" />
         </div>
         <div class="col-4 col-md-2">
-          <input type="number" formControlName="reps" class="form-control" placeholder="Reps" />
+<input type="number" formControlName="reps" class="form-control" placeholder="{{ 'WORKOUT.REPS' | translate }}" />
         </div>
         <div class="col-4 col-md-2">
-          <input type="number" formControlName="weight" class="form-control" placeholder="Weight (kg)" />
+<input type="number" formControlName="weight" class="form-control" placeholder="{{ 'WORKOUT.WEIGHT' | translate }}" />
         </div>
         <div class="col-auto">
-          <button type="button" class="btn btn-outline-danger" (click)="removeItem(i)">Remove</button>
+<button type="button" class="btn btn-outline-danger" (click)="removeItem(i)">{{ 'WORKOUT.REMOVE' | translate }}</button>
         </div>
       </div>
 
-      <button type="button" class="btn btn-outline-secondary mt-2" (click)="addItem()">+ Add Exercise</button>
+<button type="button" class="btn btn-outline-secondary mt-2" (click)="addItem()">+ {{ 'WORKOUT.ADD_EXERCISE' | translate }}</button>
     </div>
 
     <div class="footer">
-      <button type="button" class="btn btn-light" (click)="upsertVisible=false">Cancel</button>
+<button type="button" class="btn btn-light" (click)="upsertVisible=false">{{ 'WORKOUT.CANCEL' | translate }}</button>
       <button type="submit" class="btn btn-primary" [disabled]="upsertForm.invalid || items.length === 0 || saving">
-        <span *ngIf="!saving">{{ mode === 'create' ? 'Create' : 'Save' }}</span>
-        <span *ngIf="saving">Saving…</span>
+<span *ngIf="!saving">{{ mode==='create' ? ('WORKOUT.CREATE' | translate) : ('WORKOUT.SAVE' | translate) }}</span>
+<span *ngIf="saving">{{ 'WORKOUT.SAVING' | translate }}</span>
       </button>
     </div>
   </form>

@@ -1,30 +1,32 @@
 <div class="dash container mt-4">
   <div class="header">
     <div class="left">
-      <h2>Weekly Dashboard</h2>
+     <h2>{{ 'DASH.TITLE' | translate }}</h2>
       <div class="sub">{{ weekLabel() }}</div>
     </div>
     <div class="right">
-      <button nz-button nzType="default" (click)="goPrevWeek()">‹ Prev</button>
-      <button nz-button nzType="default" (click)="goThisWeek()">This Week</button>
-      <button nz-button nzType="default" (click)="goNextWeek()">Next ›</button>
+<button nz-button nzType="default" (click)="goPrevWeek()">‹ {{ 'DASH.PREV' | translate }}</button>
+<button nz-button nzType="default" (click)="goThisWeek()">{{ 'DASH.THISWEEK' | translate }}</button>
+<button nz-button nzType="default" (click)="goNextWeek()">{{ 'DASH.NEXT' | translate }} ›</button>
+
     </div>
   </div>
 
   <!-- KPIs -->
   <div class="kpis" *ngIf="!loading(); else skeleton">
     <nz-card class="kpi">
-      <div class="kpi-title">Sessions</div>
+      <div class="kpi-title">{{ 'DASH.SESSIONS' | translate }}</div>
+
       <div class="kpi-value">{{ kpi().sessions }}</div>
       <div class="kpi-tags">
-        <nz-tag nzColor="success">Easy: {{ kpi().easy }}</nz-tag>
-        <nz-tag nzColor="warning">Medium: {{ kpi().medium }}</nz-tag>
-        <nz-tag nzColor="error">Hard: {{ kpi().hard }}</nz-tag>
+<nz-tag nzColor="success">{{ 'DASH.EASY' | translate }}: {{ kpi().easy }}</nz-tag>
+<nz-tag nzColor="warning">{{ 'DASH.MEDIUM' | translate }}: {{ kpi().medium }}</nz-tag>
+<nz-tag nzColor="error">{{ 'DASH.HARD' | translate }}: {{ kpi().hard }}</nz-tag>
       </div>
     </nz-card>
 
     <nz-card class="kpi chart-card">
-      <div class="card-title">Sessions (This vs Last Week)</div>
+<div class="card-title">{{ 'DASH.SESSIONS_COMPARE' | translate }}</div>
       <apx-chart
         [series]="sessionsSeries"
         [chart]="sessionsOpts.chart"
@@ -39,18 +41,18 @@
     </nz-card>
 
     <nz-card class="kpi chart-card">
-      <div class="card-title">Difficulty Split</div>
+<div class="card-title">{{ 'DASH.DIFFICULTY_SPLIT' | translate }}</div>
       <apx-chart
   [series]="difficultySeries"
   [chart]="{ type: 'donut', height: 260 }"
-  [labels]="['Easy','Medium','Hard']"
+  [labels]="[ 'DASH.EASY' | translate, 'DASH.MEDIUM' | translate, 'DASH.HARD' | translate ]"
   [legend]="{ position: 'bottom' }"
   [tooltip]="tooltipPlain">
       </apx-chart>
     </nz-card>
 
     <nz-card class="kpi chart-card">
-      <div class="card-title">Top Muscles (Hits)</div>
+<div class="card-title">{{ 'DASH.TOP_MUSCLES' | translate }}</div>
       <apx-chart
         [series]="topMuscleSeries"
         [chart]="topMuscleOpts.chart"
@@ -77,7 +79,7 @@
   <!-- Nutrition -->
   <div class="row mt-3">
     <div class="col-12 col-lg-5">
-      <nz-card nzTitle="Weekly Macros">
+<nz-card nzTitle="{{ 'DASH.WEEKLY_MACROS' | translate }}">
         <apx-chart
            [series]="macrosDonutSeries"
   [chart]="macrosDonutOpts.chart"
@@ -88,7 +90,7 @@
       </nz-card>
     </div>
     <div class="col-12 col-lg-7">
-      <nz-card nzTitle="Daily Macros (g)">
+<nz-card nzTitle="{{ 'DASH.DAILY_MACROS' | translate }}">
         <apx-chart
           [series]="macrosStackedSeries"
           [chart]="macrosStackedOpts.chart"

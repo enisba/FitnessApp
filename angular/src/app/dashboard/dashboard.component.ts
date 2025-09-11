@@ -7,6 +7,8 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NgApexchartsModule, ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexStroke, ApexXAxis, ApexYAxis, ApexLegend, ApexTooltip, ApexGrid, ApexNonAxisChartSeries, ApexResponsive, ApexFill } from 'ng-apexcharts';
 import { firstValueFrom } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+
 
 // ✅ Adjust these imports to your actual proxy paths/types
 import { WorkoutLogDto } from '@proxy/fitness/workouts';
@@ -44,6 +46,7 @@ type DonutOptions = {
   imports: [
     CommonModule,
     NzCardModule,
+    TranslateModule,
     NzGridModule,
     NzButtonModule,
     NzTagModule,
@@ -393,8 +396,11 @@ private buildMacrosDonut() {
     yaxis: { min: 0, forceNiceScale: true, labels: { formatter: (v) => `${Math.round(v)}g` } },
     legend: { position: 'top', horizontalAlign: 'right' },
     grid: { strokeDashArray: 3 },
-    tooltip: { shared: true, y: { formatter: (v) => `${v} g` } }
-  };
+  tooltip: {
+    shared: true,
+    intersect: false,  
+    y: { formatter: (v) => `${v} g` }
+  }  };
 }
 
 }
