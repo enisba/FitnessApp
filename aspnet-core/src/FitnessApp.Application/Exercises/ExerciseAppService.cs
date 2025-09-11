@@ -72,6 +72,7 @@ namespace FitnessApp.Fitness.Exercises
             return new PagedResultDto<ExerciseDto>(total, dtos);
         }
 
+        [Obsolete]
         public async Task<ExerciseDto> GetAsync(Guid id)
         {
             var ex = await _exerciseRepo.WithDetails(x => x.PrimaryMuscle)
