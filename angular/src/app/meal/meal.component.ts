@@ -7,11 +7,13 @@ import {
   CreateMealDto,
   UpdateMealDto,
 } from '@proxy/fitness/nutritions';
+import { TranslateModule } from '@ngx-translate/core';
+
 
 @Component({
   selector: 'app-meal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule,TranslateModule, ReactiveFormsModule],
   templateUrl: './meal.component.html',
 })
 export class MealComponent implements OnInit {
