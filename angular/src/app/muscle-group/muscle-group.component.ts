@@ -4,11 +4,12 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { MuscleGroupService, MuscleGroupDto } from '@proxy/fitness/exercises';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-muscle-group',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NzModalModule, NzInputModule],
+  imports: [CommonModule,TranslateModule, ReactiveFormsModule, NzModalModule, NzInputModule],
   templateUrl: './muscle-group.component.html',
 })
 export class MuscleGroupComponent implements OnInit {
