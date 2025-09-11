@@ -1,11 +1,12 @@
 <div class="calendar-wrapper container mt-4">
   <div class="header">
-    <h2>Workout Calendar</h2>
+<h2>{{ 'CALENDAR.TITLE' | translate }}</h2>
     <div class="right">
-      <button nz-button nzType="default" (click)="goPrev()">‹ Prev</button>
-      <div class="month-label">{{ monthLabel() }}</div>
-      <button nz-button nzType="default" (click)="goNext()">Next ›</button>
-      <button nz-button nzType="primary" (click)="openToday()" class="add-btn">+ Add</button>
+<button nz-button nzType="default" (click)="goPrev()">‹ {{ 'CALENDAR.PREV' | translate }}</button>
+<div class="month-label">{{ monthLabel() }}</div>
+<button nz-button nzType="default" (click)="goNext()">{{ 'CALENDAR.NEXT' | translate }} ›</button>
+<button nz-button nzType="primary" (click)="openToday()" class="add-btn">+ {{ 'CALENDAR.ADD' | translate }}</button>
+
     </div>
   </div>
 
@@ -44,7 +45,7 @@
 
   <ng-container *nzModalContent>
     <div class="existing" *ngIf="logsOf(selectedDate()).length">
-      <div class="ex-title">Existing logs</div>
+<div class="ex-title">{{ 'CALENDAR.EXISTING_LOGS' | translate }}</div>
       <ul class="ex-list">
         <li *ngFor="let l of logsOf(selectedDate()); trackBy: trackById">
           <span class="tag" [ngClass]="{ workout: l.type===0, exercise: l.type===1 }">
@@ -53,7 +54,7 @@
           <span class="muted" *ngIf="l.sets && l.reps">{{ l.sets }}&times;{{ l.reps }}</span>
           <span class="muted" *ngIf="l.weight">• {{ l.weight }} kg</span>
           <span class="muted" *ngIf="l.durationMinutes">• {{ l.durationMinutes }} min</span>
-          <button nz-button nzType="link" (click)="removeLog(l.id!)">Delete</button>
+<button nz-button nzType="link" (click)="removeLog(l.id!)">{{ 'CALENDAR.DELETE' | translate }}</button>
         </li>
       </ul>
       <hr>
@@ -61,52 +62,53 @@
 
     <form [formGroup]="form" (ngSubmit)="save()" autocomplete="off" class="form-grid">
       <div class="row">
-        <label class="lbl">Type</label>
+<label class="lbl">{{ 'CALENDAR.TYPE' | translate }}</label>
         <nz-radio-group formControlName="type">
-          <label nz-radio nzValue="workout">Workout</label>
-          <label nz-radio nzValue="exercise">Exercise</label>
+<label nz-radio nzValue="workout">{{ 'CALENDAR.WORKOUT' | translate }}</label>
+<label nz-radio nzValue="exercise">{{ 'CALENDAR.EXERCISE' | translate }}</label>
         </nz-radio-group>
       </div>
 
       <div class="row" *ngIf="form.value.type==='workout'">
-        <label class="lbl">Workout</label>
-        <nz-select formControlName="workoutId" nzShowSearch nzPlaceHolder="Select workout" class="w-100">
+<label class="lbl">{{ 'CALENDAR.WORKOUT' | translate }}</label>
+<nz-select formControlName="workoutId" nzShowSearch nzPlaceHolder="{{ 'CALENDAR.SELECT_WORKOUT' | translate }}" class="w-100">
           <nz-option *ngFor="let w of workouts()" [nzValue]="w.id" [nzLabel]="w.name"></nz-option>
         </nz-select>
       </div>
 
       <div class="row" *ngIf="form.value.type==='exercise'">
-        <label class="lbl">Exercise</label>
-        <nz-select formControlName="exerciseId" nzShowSearch nzPlaceHolder="Select exercise" class="w-100">
+<label class="lbl">{{ 'CALENDAR.EXERCISE' | translate }}</label>
+<nz-select formControlName="exerciseId" nzShowSearch nzPlaceHolder="{{ 'CALENDAR.SELECT_EXERCISE' | translate }}" class="w-100">
           <nz-option *ngFor="let e of exercises()" [nzValue]="e.id" [nzLabel]="e.name"></nz-option>
         </nz-select>
       </div>
 
 <div class="row" *ngIf="form.value.type==='workout'">
-  <label class="lbl">Notes</label>
-  <input nz-input type="text" formControlName="notes" placeholder="Optional note">
+<label class="lbl">{{ 'CALENDAR.NOTES' | translate }}</label>
+<input nz-input type="text" formControlName="notes" placeholder="{{ 'CALENDAR.OPTIONAL_NOTE' | translate }}">
+
 </div>
 
 <div *ngIf="form.value.type==='exercise'">
   <div class="row three">
     <div>
-      <label class="lbl">Sets</label>
-      <input nz-input type="number" formControlName="sets" placeholder="e.g., 4">
+<label class="lbl">{{ 'CALENDAR.SETS' | translate }}</label>
+<input nz-input type="number" formControlName="sets" placeholder="e.g., 4">
     </div>
     <div>
-      <label class="lbl">Reps</label>
-      <input nz-input type="number" formControlName="reps" placeholder="e.g., 10">
+<label class="lbl">{{ 'CALENDAR.REPS' | translate }}</label>
+<input nz-input type="number" formControlName="reps" placeholder="e.g., 10">
     </div>
     <div>
-      <label class="lbl">Weight (kg)</label>
-      <input nz-input type="number" formControlName="weight" placeholder="e.g., 60">
+<label class="lbl">{{ 'CALENDAR.WEIGHT' | translate }}</label>
+<input nz-input type="number" formControlName="weight" placeholder="e.g., 60">
     </div>
   </div>
 
   <div class="row two">
     <div>
-      <label class="lbl">Duration (min)</label>
-      <input nz-input type="number" formControlName="durationMinutes" placeholder="e.g., 45">
+<label class="lbl">{{ 'CALENDAR.DURATION' | translate }}</label>
+<input nz-input type="number" formControlName="durationMinutes" placeholder="e.g., 45">
     </div>
     <div>
       <label class="lbl">Notes</label>
@@ -116,8 +118,10 @@
 </div>
 
       <div class="footer">
-        <button nz-button type="button" (click)="closeModal()">Cancel</button>
-        <button nz-button nzType="primary" type="submit" [disabled]="saving()">Save</button>
+<div class="footer">
+  <button nz-button type="button" (click)="closeModal()">{{ 'CALENDAR.CANCEL' | translate }}</button>
+  <button nz-button nzType="primary" type="submit" [disabled]="saving()">{{ 'CALENDAR.SAVE' | translate }}</button>
+</div>
       </div>
     </form>
   </ng-container>

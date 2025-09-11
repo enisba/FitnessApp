@@ -9,6 +9,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { ToasterService } from '@abp/ng.theme.shared';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { WorkoutService, WorkoutDto } from '@proxy/fitness/workouts';
 import { ExerciseService, ExerciseDto } from '@proxy/fitness/exercises';
@@ -29,6 +30,7 @@ type DayKey = string;
   standalone: true,
   imports: [
     CommonModule,
+    TranslateModule,
     ReactiveFormsModule,
     NzCalendarModule,
     NzModalModule,
