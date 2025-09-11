@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormArray, FormGroup } from '@angular/forms';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { TranslateModule } from '@ngx-translate/core';
 
 import {
   WorkoutService,
@@ -14,7 +15,7 @@ import { ExerciseService, ExerciseDto } from '@proxy/fitness/exercises';
 @Component({
   selector: 'app-workout',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NzModalModule],
+  imports: [CommonModule,TranslateModule, ReactiveFormsModule, NzModalModule],
   templateUrl: './workout.component.html',
   styleUrls: ['./workout.component.scss'],
 })
