@@ -1,5 +1,12 @@
 import { Component } from '@angular/core';
-import { InternetConnectionStatusComponent, LoaderBarComponent } from '@abp/ng.theme.shared';
+import { ConfigStateService } from '@abp/ng.core';
+import { TranslateService } from '@ngx-translate/core';
+
+// ABP UI componentleri
+import {
+  InternetConnectionStatusComponent,
+  LoaderBarComponent
+} from '@abp/ng.theme.shared';
 import { DynamicLayoutComponent } from '@abp/ng.core';
 
 @Component({
@@ -9,6 +16,28 @@ import { DynamicLayoutComponent } from '@abp/ng.core';
     <abp-dynamic-layout />
     <abp-internet-status />
   `,
-  imports: [LoaderBarComponent, DynamicLayoutComponent, InternetConnectionStatusComponent],
+  standalone: true,
+  imports: [
+    LoaderBarComponent,
+    DynamicLayoutComponent,
+    InternetConnectionStatusComponent
+  ]
 })
-export class AppComponent {}
+export class AppComponent {
+  constructor(
+    private configState: ConfigStateService,
+    private translate: TranslateService
+  ) {
+    this.translate.setDefaultLang('en');
+    this.translate.use('en');
+
+    this.configState
+      .getDeep$('localization.currentCulture.cultureName')
+      .subscribe((lang) => {
+        if (lang) {
+          const shortLang = lang.split('-')[0].toLowerCase();
+          this.translate.use(shortLang);
+        }
+      });
+  }
+}

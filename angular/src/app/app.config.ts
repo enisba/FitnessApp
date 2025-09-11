@@ -16,11 +16,17 @@ import { provideLogo, withEnvironmentOptions } from '@volo/ngx-lepton-x.core';
 import { ThemeLeptonXModule } from '@abp/ng.theme.lepton-x';
 import { SideMenuLayoutModule } from '@abp/ng.theme.lepton-x/layouts';
 import { AccountLayoutModule } from '@abp/ng.theme.lepton-x/account';
-import { ThemeSharedModule, withHttpErrorConfig, withValidationBluePrint, provideAbpThemeShared } from '@abp/ng.theme.shared';
+import { ThemeSharedModule, withValidationBluePrint, provideAbpThemeShared } from '@abp/ng.theme.shared';
 import { provideSideMenuLayout } from '@abp/ng.theme.lepton-x/layouts';
 import { NzModalModule } from 'ng-zorro-antd/modal'; 
 import { NZ_I18N, tr_TR } from 'ng-zorro-antd/i18n';
+import { provideHttpClient, HttpClient } from '@angular/common/http';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,22 +36,30 @@ export const appConfig: ApplicationConfig = {
     provideSideMenuLayout(),
     provideAbpOAuth(),
     provideAnimations(),
-    APP_ROUTE_PROVIDER,
     { provide: NZ_I18N, useValue: tr_TR }, 
     provideSettingManagementConfig(),
     provideAccountConfig(),
     provideIdentityConfig(),
     provideTenantManagementConfig(),
     provideFeatureManagementConfig(),
-    provideAnimations(),
     provideLogo(withEnvironmentOptions(environment)),
     importProvidersFrom(
       ThemeLeptonXModule.forRoot(),
       SideMenuLayoutModule.forRoot(),
       AccountLayoutModule.forRoot(),
       ThemeSharedModule,
-      NzModalModule 
+      NzModalModule,
+      TranslateModule.forRoot({
+        loader: {
+          provide: TranslateLoader,
+          useFactory: HttpLoaderFactory,
+          deps: [HttpClient]
+        }
+      })
     ),
-    provideAbpThemeShared(withValidationBluePrint({ wrongPassword: 'Please choose 1q2w3E*' })),
+    provideHttpClient(), 
+    provideAbpThemeShared(
+      withValidationBluePrint({ wrongPassword: 'Please choose 1q2w3E*' })
+    ),
   ],
 };
