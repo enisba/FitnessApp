@@ -7,11 +7,13 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { Subject, debounceTime, takeUntil } from 'rxjs';
 import { ExerciseService, ExerciseDto, MuscleGroupService, MuscleGroupDto } from '@proxy/fitness/exercises';
 import { ToasterService } from '@abp/ng.theme.shared';
+import { TranslateModule } from '@ngx-translate/core';
+
 
 @Component({
   selector: 'app-exercise',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NzModalModule, NzInputModule, NzSelectModule],
+  imports: [CommonModule, TranslateModule, ReactiveFormsModule, NzModalModule, NzInputModule, NzSelectModule],
   templateUrl: './exercise.component.html',
   styleUrls: ['./exercise.component.scss'],
 })

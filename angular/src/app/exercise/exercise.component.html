@@ -2,31 +2,31 @@
 <form [formGroup]="searchForm" class="toolbar">
   <!-- Search (solda, genişler) -->
   <nz-input-group nzPrefixIcon="search" class="grow">
-    <input nz-input formControlName="q" placeholder="Search exercises (e.g., row, press)" />
+<input nz-input formControlName="q" placeholder="{{ 'EXERCISE.SEARCH' | translate }}" />
   </nz-input-group>
 
   <!-- Difficulty -->
-  <nz-select class="w-100" formControlName="difficulty" nzAllowClear nzPlaceHolder="Difficulty">
-    <nz-option [nzValue]="0" nzLabel="Easy"></nz-option>
-    <nz-option [nzValue]="1" nzLabel="Medium"></nz-option>
-    <nz-option [nzValue]="2" nzLabel="Hard"></nz-option>
-  </nz-select>
+<nz-select class="w-100" formControlName="difficulty" nzAllowClear nzPlaceHolder="{{ 'EXERCISE.DIFFICULTY' | translate }}">
+  <nz-option [nzValue]="0" [nzLabel]="'EXERCISE.EASY' | translate"></nz-option>
+  <nz-option [nzValue]="1" [nzLabel]="'EXERCISE.MEDIUM' | translate"></nz-option>
+  <nz-option [nzValue]="2" [nzLabel]="'EXERCISE.HARD' | translate"></nz-option>
+</nz-select>
 
   <!-- Muscle -->
-  <nz-select class="w-100" formControlName="muscleId" nzAllowClear nzPlaceHolder="Muscle">
+<nz-select class="w-100" formControlName="muscleId" nzAllowClear nzPlaceHolder="{{ 'EXERCISE.MUSCLE' | translate }}">
     <nz-option *ngFor="let m of muscles" [nzValue]="m.id" [nzLabel]="m.name"></nz-option>
   </nz-select>
 
   <!-- Aktif filtreleri tek tıkla temizle -->
-  <button type="button" class="btn btn-link toolbar-reset" (click)="resetFilters()" *ngIf="activeBadges.length">Clear</button>
-
+<button type="button" class="btn btn-link toolbar-reset" (click)="resetFilters()" *ngIf="activeBadges.length">
+  {{ 'EXERCISE.CLEAR' | translate }}
+</button>
   <!-- Spacer -->
   <span class="spacer"></span>
 
-  <!-- New (sağda) -->
-  <button class="btn btn-primary" type="button" (click)="openCreate()">
-    <i class="bi bi-plus-lg"></i> New Exercise
-  </button>
+<button class="btn btn-primary" type="button" (click)="openCreate()">
+  <i class="bi bi-plus-lg"></i> {{ 'EXERCISE.NEW' | translate }}
+</button>
 </form>
 
 <!-- Aktif filtre rozetleri -->
@@ -35,17 +35,18 @@
 </div>
 
 <!-- Sonuç sayısı -->
-<div class="results-hint" *ngIf="!loading">{{ exercises.length }} result{{ exercises.length===1?'':'s' }}</div>
-
+<div class="results-hint" *ngIf="!loading">
+  {{ exercises.length }} {{ exercises.length===1 ? ('EXERCISE.RESULT' | translate) : ('EXERCISE.RESULTS' | translate) }}
+</div>
 <!-- TABLO -->
 <div *ngIf="loading">Loading...</div>
 <table class="table table-hover modern-table" *ngIf="!loading && exercises.length">
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Primary Muscle</th>
-      <th>Difficulty</th>
-      <th class="text-end">Actions</th>
+<th>{{ 'EXERCISE.NAME' | translate }}</th>
+<th>{{ 'EXERCISE.PRIMARY_MUSCLE' | translate }}</th>
+<th>{{ 'EXERCISE.DIFFICULTY' | translate }}</th>
+<th class="text-end">{{ 'EXERCISE.ACTIONS' | translate }}</th>
     </tr>
   </thead>
   <tbody>
@@ -58,8 +59,9 @@
         </span>
       </td>
       <td class="text-end">
-        <button class="btn btn-sm btn-outline-primary me-2" (click)="openEdit(ex)">Edit</button>
-        <button class="btn btn-sm btn-outline-danger" (click)="delete(ex.id)">Delete</button>
+<button class="btn btn-sm btn-outline-primary me-2" (click)="openEdit(ex)">{{ 'EXERCISE.EDIT' | translate }}</button>
+<button class="btn btn-sm btn-outline-danger" (click)="delete(ex.id)">{{ 'EXERCISE.DELETE' | translate }}</button>
+
       </td>
     </tr>
   </tbody>
@@ -67,13 +69,13 @@
 
 <div class="empty" *ngIf="!loading && !exercises.length">
   <i class="bi bi-emoji-neutral"></i>
-  <div>No exercises match your filters.</div>
+  <div>{{ 'EXERCISE.EMPTY' | translate }}</div>
 </div>
 
 <!-- UPSERT MODAL (ADD + EDIT) -->
 <nz-modal
   [(nzVisible)]="upsertVisible"
-  [nzTitle]="mode==='create' ? 'New Exercise' : 'Edit Exercise'"
+[nzTitle]="mode==='create' ? ('EXERCISE.NEW' | translate) : ('EXERCISE.EDIT' | translate)"
   [nzCentered]="true"
   [nzWidth]="640"
   nzWrapClassName="centered-modal"
@@ -86,7 +88,7 @@
     <form [formGroup]="upsertForm" (ngSubmit)="saveUpsert()" class="modal-form">
       <div class="modal-grid">
         <div>
-          <label class="form-label">Exercise name</label>
+<label class="form-label">{{ 'EXERCISE.NAME' | translate }}</label>
           <nz-input-group nzPrefixIcon="edit">
             <input nz-input formControlName="name" cdkFocusInitial placeholder="Incline Dumbbell Press" />
           </nz-input-group>
@@ -94,7 +96,7 @@
         </div>
 
         <div>
-          <label class="form-label">Primary muscle</label>
+<label class="form-label">{{ 'EXERCISE.PRIMARY_MUSCLE' | translate }}</label>
           <nz-select formControlName="primaryMuscleId" nzShowSearch nzPlaceHolder="Select muscle" class="w-100">
             <nz-option *ngFor="let m of muscles" [nzValue]="m.id" [nzLabel]="m.name"></nz-option>
           </nz-select>
@@ -103,24 +105,24 @@
       </div>
 
       <div>
-        <div class="form-label">Difficulty</div>
+<div class="form-label">{{ 'EXERCISE.DIFFICULTY' | translate }}</div>
         <div class="btn-group diff-group" role="group" aria-label="Difficulty">
           <input type="radio" class="btn-check" name="diff" id="diff-easy" (change)="setDiff(0)" [checked]="upsertForm.value.difficulty===0">
-          <label class="btn btn-outline-success" for="diff-easy">Easy</label>
+<label class="btn btn-outline-success" for="diff-easy">{{ 'EXERCISE.EASY' | translate }}</label>
 
           <input type="radio" class="btn-check" name="diff" id="diff-med" (change)="setDiff(1)" [checked]="upsertForm.value.difficulty===1">
-          <label class="btn btn-outline-warning" for="diff-med">Medium</label>
+<label class="btn btn-outline-warning" for="diff-med">{{ 'EXERCISE.MEDIUM' | translate }}</label>
 
           <input type="radio" class="btn-check" name="diff" id="diff-hard" (change)="setDiff(2)" [checked]="upsertForm.value.difficulty===2">
-          <label class="btn btn-outline-danger" for="diff-hard">Hard</label>
+<label class="btn btn-outline-danger" for="diff-hard">{{ 'EXERCISE.HARD' | translate }}</label>
         </div>
       </div>
 
       <div class="footer">
-        <button type="button" class="btn btn-light" (click)="upsertVisible=false">Cancel</button>
+<button type="button" class="btn btn-light" (click)="upsertVisible=false">{{ 'EXERCISE.CANCEL' | translate }}</button>
         <button type="submit" class="btn btn-primary" [disabled]="upsertForm.invalid || saving">
-          <span *ngIf="!saving">{{ mode==='create' ? 'Create' : 'Save' }}</span>
-          <span *ngIf="saving">Saving…</span>
+<span *ngIf="!saving">{{ mode==='create' ? ('EXERCISE.CREATE' | translate) : ('EXERCISE.SAVE' | translate) }}</span>
+<span *ngIf="saving">{{ 'EXERCISE.SAVING' | translate }}</span>
         </button>
       </div>
     </form>
