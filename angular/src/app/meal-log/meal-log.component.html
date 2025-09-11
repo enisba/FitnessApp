@@ -1,5 +1,6 @@
 <div class="container mt-4">
-  <h2>Meal Logs</h2>
+<h2>{{ 'MEALLOG.TITLE' | translate }}</h2>
+>
 
   <!-- Meal Log Form -->
   <form [formGroup]="form" (ngSubmit)="saveLog()" class="mb-3 row g-2">
@@ -8,9 +9,9 @@
     </div>
     <div class="col">
       <select formControlName="mealType" class="form-select">
-        <option value="Breakfast">Breakfast</option>
-        <option value="Lunch">Lunch</option>
-        <option value="Dinner">Dinner</option>
+  <option value="Breakfast">{{ 'MEALLOG.BREAKFAST' | translate }}</option>
+  <option value="Lunch">{{ 'MEALLOG.LUNCH' | translate }}</option>
+  <option value="Dinner">{{ 'MEALLOG.DINNER' | translate }}</option>
       </select>
     </div>
 
@@ -22,7 +23,7 @@
       >
         <div class="col">
           <select formControlName="mealId" class="form-select">
-            <option value="" disabled>Select meal</option>
+<option value="" disabled>{{ 'MEALLOG.SELECT_MEAL' | translate }}</option>
             <option *ngFor="let m of meals" [value]="m.id">
               {{ m.name }} ({{ m.calories }} kcal)
             </option>
@@ -30,26 +31,27 @@
         </div>
         <div class="col">
           <input
-            type="number"
-            formControlName="quantity"
-            class="form-control"
-            placeholder="Quantity"
+   type="number"
+  formControlName="quantity"
+  class="form-control"
+  placeholder="{{ 'MEALLOG.QUANTITY' | translate }}"
           />
         </div>
         <div class="col">
-          <button type="button" class="btn btn-danger" (click)="removeItem(i)">
-            Remove
-          </button>
+    <button type="button" class="btn btn-danger" (click)="removeItem(i)">
+  {{ 'MEALLOG.REMOVE' | translate }}
+</button>
         </div>
       </div>
-      <button type="button" class="btn btn-secondary mt-2" (click)="addItem()">
-        + Add Item
-      </button>
+<button type="button" class="btn btn-secondary mt-2" (click)="addItem()">
+  + {{ 'MEALLOG.ADD_ITEM' | translate }}
+</button>
     </div>
 
     <div class="col-12 mt-3">
-      <button type="submit" class="btn btn-primary">Save Log</button>
-    </div>
+<button type="submit" class="btn btn-primary">
+  {{ 'MEALLOG.SAVE_LOG' | translate }}
+</button>    </div>
   </form>
 
   <hr />
@@ -69,24 +71,24 @@
 
         <!-- Günlük toplam makrolar -->
         <div class="mt-2">
-          <span class="badge bg-primary me-2">
-            Calories: {{ log.totalCalories }}
-          </span>
-          <span class="badge bg-success me-2">
-            Protein: {{ log.totalProtein }} g
-          </span>
-          <span class="badge bg-info me-2">
-            Carbs: {{ log.totalCarbs }} g
-          </span>
-          <span class="badge bg-warning">
-            Fat: {{ log.totalFat }} g
-          </span>
+   <span class="badge bg-primary me-2">
+  {{ 'MEALLOG.CALORIES' | translate }}: {{ log.totalCalories }}
+</span>
+<span class="badge bg-success me-2">
+  {{ 'MEALLOG.PROTEIN' | translate }}: {{ log.totalProtein }} g
+</span>
+<span class="badge bg-info me-2">
+  {{ 'MEALLOG.CARBS' | translate }}: {{ log.totalCarbs }} g
+</span>
+<span class="badge bg-warning">
+  {{ 'MEALLOG.FAT' | translate }}: {{ log.totalFat }} g
+</span>
         </div>
       </div>
     </div>
   </div>
 
   <ng-template #noLogs>
-    <p>No logs yet. Add your first meal log above.</p>
+  <p>{{ 'MEALLOG.NO_LOGS' | translate }}</p>
   </ng-template>
 </div>

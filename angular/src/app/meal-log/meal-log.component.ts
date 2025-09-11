@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { MealLogService, MealLogDto, CreateMealLogDto } from '@proxy/fitness/nutritions';
 import { MealService, MealDto } from '@proxy/fitness/nutritions';
+import { TranslateModule } from '@ngx-translate/core';
+
 
 @Component({
   selector: 'app-meal-log',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule,TranslateModule, ReactiveFormsModule],
   templateUrl: './meal-log.component.html',
 })
 export class MealLogComponent implements OnInit {
